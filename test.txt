@@ -1,0 +1,14 @@
+1.sudo apt-get update
+  sudo apt-get install iceweasel
+  https://beebotte.com 
+  sudo pip-3.2 install beebotte requests
+  pip install beebotte
+  git clone https://www.github.com/adafruit/Adafruit_Python_DHT.git
+  cd /home/pi/Adafruit_Python_DHT 
+  sudo python setup.py install
+
+2.sudo apt-get install php libapache2-mod-php -y
+3.sudo apt-get install apache2 -y
+4.apt-get install i2c-tools
+5.i2cdetect -y 1
+6.sudo chmod 077 -R /var/www/html
