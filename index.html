@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#f3d6f0">
+<title>GemVerse v0.5.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <div id="scene">
+    <canvas class="mascot" data-color="mint" data-bob-amp="6" data-bob-speed="1500" data-phase="0" style="width:46px;height:46px;left:2%;top:6px"></canvas>
+    <canvas class="mascot" data-color="pink" data-bob-amp="5" data-bob-speed="1750" data-phase="1.4" style="width:38px;height:38px;right:4%;top:34px"></canvas>
+    <canvas class="mascot" data-color="blue" data-bob-amp="7" data-bob-speed="1300" data-phase="2.6" style="width:34px;height:34px;left:10%;top:76px"></canvas>
+    <header>
+      <h1>🌌 GemVerse <small>v0.5.0</small></h1>
+    </header>
+  </div>
+  <canvas id="game"></canvas>
+  <div id="hud">
+    <div class="hud-group">
+      <div class="hud-box"><span class="hud-icon">⭐</span><span class="hud-text"><span class="hud-label">คะแนน</span><span id="score" class="hud-value">0</span></span></div>
+      <div class="hud-box"><span class="hud-icon">🔥</span><span class="hud-text"><span class="hud-label">ทวีคูณ</span><span id="mult" class="hud-value">x1.0</span></span></div>
+    </div>
+    <button id="mute" class="hud-btn" aria-label="เปิด/ปิดเสียง">🔊</button>
+  </div>
+  <p id="hint">ปัด/แตะ 2 ช่องติดกันเพื่อสลับ • เรียง 4 = ☄️ ดาวหางล้างแถว/คอลัมน์ • บล็อก 2x2 = 🚀 จรวดล่าเป้าหมาย • รูป L/T = 💣 ระเบิด 3x3 • เรียง 5 = 🌟 โนวาล้างสี • สลับ 2 ตัวพิเศษ = 💥 คอมโบใหญ่ • แตะ 🔊 เพื่อปิดเสียง</p>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
