@@ -1,31 +1,21 @@
-/* 🍡 UI ธีม "Poring Pastel" — แรงบันดาลใจจาก "Get Poring" (Ragnarok Zero: Global)
-   ปรัชญา: สติกเกอร์พิกเซลน่ารัก พาสเทลม่วง-ชมพู กรอบโค้งมนหนา เงาแบนแบบของเล่น
-   (เปลี่ยนจากธีม "Tiny Universe" เดิม — ตามคำขอ v0.6 reskin, ART_BIBLE.md เดิมพักไว้ก่อน) */
+/* 🪐 UI ธีม "Tiny Cozy Universe" — ตาม Asset Pack Style Guide (ม่วงกาแล็กซี + ทอง)
+   เฟส 1: Background / Board&Cells / Gems / Special Gems / UI Buttons&Panels / HUD
+   Canvas ภายใน (js/engine/Renderer.js) มีฉากอวกาศ/แสงอุ่น/CRT ของตัวเองอยู่แล้ว — ที่นี่จัดแค่ "กรอบรอบเกม" */
 
 :root{
-  --ink:#3a2a52;         /* ตัวอักษรหลัก ม่วงเข้มอมน้ำตาล */
-  --ink-soft:#7a63a8;    /* label รอง */
-  --panel:#fff6fd;       /* พื้นการ์ด/แผง ครีมอมชมพูสว่าง */
-  --panel-lo:#ffe3f6;    /* พื้นการ์ดเข้มขึ้นนิด (แถบสลับ) */
-  --border:#6b4fa0;      /* เส้นขอบม่วงเข้ม — ซิกเนเจอร์การ์ตูนพิกเซล */
-  --border-lo:#4a3574;   /* ขอบเข้มสุด/เงา */
-  --blue:#4f8fe6;        /* ปุ่มหลัก ฟ้าสด (โทนเดียวกับปุ่ม "ลงทะเบียน" ในภาพต้นแบบ) */
-  --blue-lo:#2f5fb0;
-  --gold:#ffc93d;        /* ค่าตัวเลข/ดาว/เหรียญ */
-  --gold-lo:#c98a10;
-  --pink:#ff8ec0;
-  --danger:#e0557a;
+  --purple-0:#170B2C; --purple-1:#26184C; --purple-2:#3D2A6B; --purple-3:#5C3FAE;
+  --purple-4:#7C5CFF; --purple-5:#9B7CFF; --purple-6:#C7B3FF;
+  --gold:#FFD866; --orange:#FF9C42; --pink:#FF8EC7; --cyan:#5FE1FF; --white:#EAF4FF;
 }
 
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
-  /* ท้องฟ้าฝันหวาน: ชมพูอ่อนด้านบน ไล่ลงม่วงลาเวนเดอร์เข้มด้านล่าง เหมือนพื้นหลังโฆษณาต้นแบบ */
   background:
-    radial-gradient(ellipse 70% 40% at 50% 0%,rgba(255,255,255,.55) 0%,transparent 70%),
-    linear-gradient(180deg,#fbe0f5 0%,#e9c3f2 32%,#c9a3e8 62%,#9a7ad1 100%);
-  color:var(--ink);
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(124,92,255,.25) 0%, transparent 60%),
+    linear-gradient(180deg,#0d0620 0%,var(--purple-0) 55%,#0a0518 100%);
+  color:var(--white);
   font-family:'Chakra Petch','Segoe UI',system-ui,Arial,sans-serif;
   text-align:center;
   overflow:hidden;
@@ -38,123 +28,82 @@ body{
   height:100%;
 }
 
-/* ฉากด้านบน: ที่อยู่ของหัวเรื่อง + มาสกอตลอยประกอบ */
-#scene{position:relative;width:100%;display:flex;justify-content:center}
-.mascot{
-  position:absolute;
-  image-rendering:pixelated;image-rendering:crisp-edges;
-  filter:drop-shadow(2px 3px 0 rgba(74,53,116,.25));
-  pointer-events:none;
-  z-index:2;
-}
-
-/* ป้ายชื่อเกม — ตัวหนาพิกเซล สีขาวขอบม่วง สติกเกอร์แปะบนฟ้า */
+header{margin:10px 0 6px}
 header h1{
-  margin:10px 0 8px;
+  margin:0;
   font-family:'Press Start 2P','Courier New',monospace;
-  font-size:.95em;letter-spacing:0;
-  color:#ffffff;
-  -webkit-text-stroke:1px var(--border);
-  text-shadow:2px 2px 0 var(--border),4px 4px 0 rgba(74,53,116,.35);
+  font-size:1.15em;letter-spacing:1px;
+  background:linear-gradient(180deg,var(--purple-6),var(--purple-4));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 18px rgba(124,92,255,.5);
 }
-header small{
-  display:block;margin-top:8px;
-  font-size:.55em;color:#fff0fb;text-shadow:1px 1px 0 var(--border-lo);
+header .tagline{
+  margin:6px 0 0;
+  font-family:'Chakra Petch',sans-serif;font-weight:700;
+  font-size:.72em;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);
+  text-shadow:0 0 10px rgba(255,216,102,.4);
 }
 
-/* HUD: กล่องขนม/ถาดไอเทม มุมโค้งหนา ขอบม่วง เงาแบนแบบของเล่น — วางใต้กระดานเหมือนแถบไอเทมในภาพต้นแบบ */
-#hud{display:flex;gap:10px;margin:12px 0 4px;justify-content:center;align-items:stretch}
+/* HUD: การ์ดพาเนลจาก Asset Pack (panel_gold.png / panel_dark.png) — stretch แบบพิกเซล คมชัด */
+#hud{display:flex;gap:10px;margin:14px 0 4px;justify-content:center;align-items:stretch}
 .hud-group{
   display:flex;gap:0;
-  background:linear-gradient(180deg,var(--panel),var(--panel-lo));
-  border:3px solid var(--border);
-  border-radius:18px;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.8),
-    0 4px 0 var(--border-lo),
-    0 6px 10px rgba(74,53,116,.25);
+  background-image:url('../assets/gemverse_assets/05_ui/panel_dark.png');
+  background-size:100% 100%;
+  image-rendering:pixelated;image-rendering:crisp-edges;
+  border-radius:12px;
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));
   overflow:hidden;
-  animation:bounce 3.2s ease-in-out infinite;
 }
-.hud-box{
-  display:flex;align-items:center;gap:8px;
-  padding:8px 16px;min-width:98px;
-}
-.hud-group .hud-box+.hud-box{border-left:2px dashed #e3c6ee}
-.hud-icon{font-size:1.15em;line-height:1;filter:drop-shadow(0 1px 0 rgba(0,0,0,.2))}
+.hud-box{display:flex;align-items:center;gap:8px;padding:9px 16px;min-width:96px}
+.hud-group .hud-box+.hud-box{border-left:2px dashed rgba(199,179,255,.25)}
+.hud-icon{font-size:1.1em;line-height:1;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
 .hud-text{display:flex;flex-direction:column;align-items:flex-start}
 .hud-label{
-  display:block;
-  font-family:'Chakra Petch','Courier New',monospace;
-  font-weight:700;
-  font-size:.6em;color:var(--ink-soft);margin-bottom:3px;letter-spacing:.05em;
-  text-transform:uppercase;
+  display:block;font-family:'Chakra Petch',monospace;font-weight:700;
+  font-size:.58em;color:var(--purple-6);margin-bottom:3px;letter-spacing:.06em;text-transform:uppercase;
 }
 .hud-value{
   font-family:'Press Start 2P','Courier New',monospace;
-  font-size:.78em;color:var(--gold-lo);
-  text-shadow:0 1px 0 #fff;
+  font-size:.76em;color:var(--gold);text-shadow:0 0 8px rgba(255,216,102,.35);
 }
-#mult.hot{color:var(--danger);text-shadow:0 0 8px rgba(224,85,122,.4),0 1px 0 #fff}
+#mult.hot{color:var(--orange);text-shadow:0 0 10px rgba(255,156,66,.5)}
 
-/* ปุ่มกลม สติกเกอร์ฟ้า — กดแล้วยุบจริงแบบของเล่น */
+/* ปุ่มกลม (mute) — โทนเดียวกับกรอบ ไม่ใช้สไปรต์ปุ่ม PLAY/BACK เพราะเป็นไอคอนเดี่ยวไม่ใช่ปุ่มมีข้อความ */
 .hud-btn{
   min-width:auto;display:flex;align-items:center;justify-content:center;
   padding:0 15px;
-  background:linear-gradient(180deg,#6fb0ff,var(--blue));
-  border:3px solid var(--border);
-  border-radius:18px;
-  box-shadow:
-    inset 0 2px 0 rgba(255,255,255,.6),
-    0 4px 0 var(--blue-lo),
-    0 6px 10px rgba(74,53,116,.25);
-  font-size:1.2em;cursor:pointer;color:#fff;
-  font-family:inherit;
+  background:linear-gradient(180deg,var(--purple-4),var(--purple-2));
+  border:2px solid var(--purple-5);
+  border-radius:12px;
+  box-shadow:0 4px 0 var(--purple-1),0 6px 10px rgba(0,0,0,.35);
+  font-size:1.2em;cursor:pointer;color:#fff;font-family:inherit;
 }
-.hud-btn:active{
-  box-shadow:inset 0 2px 4px rgba(0,0,0,.25);
-  transform:translateY(3px);
-}
-.hud-btn.muted{opacity:.55;filter:grayscale(.3)}
+.hud-btn:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.35);transform:translateY(3px)}
+.hud-btn.muted{opacity:.5;filter:grayscale(.4)}
 
-/* canvas: กรอบขาวครีมหนา มุมโค้งมน เหมือนกรอบจอมือถือในภาพโฆษณา */
+/* canvas: กรอบทองอ่อนตัดกับม่วงเข้ม ให้ความรู้สึก "หน้าต่างมองอวกาศ" */
 canvas#game{
-  border:6px solid var(--border);
-  border-radius:22px;
-  background:#f4e6ff;
+  border:5px solid var(--purple-3);
+  border-radius:14px;
+  background:var(--purple-0);
   display:block;
-  image-rendering:pixelated;
-  image-rendering:crisp-edges;
+  image-rendering:pixelated;image-rendering:crisp-edges;
   box-shadow:
-    inset 0 0 0 3px #ffffffcc,
-    0 6px 0 var(--border-lo),
-    0 10px 18px rgba(74,53,116,.35);
+    inset 0 0 0 2px rgba(255,216,102,.35),
+    0 0 0 1px var(--purple-1),
+    0 10px 26px rgba(0,0,0,.55),
+    0 0 40px rgba(124,92,255,.25);
   touch-action:none;
 }
 
-/* คำแนะนำ — ตัวหนังสือขาวอมม่วงบนฟ้าพาสเทล อ่านง่าย ไม่แข่งกับ HUD */
 #hint{
-  font-family:'Chakra Petch','Segoe UI',system-ui,sans-serif;
-  font-weight:600;
-  font-size:.82em;color:#fff;opacity:.92;margin:12px 6px 6px;
-  text-shadow:1px 1px 0 rgba(74,53,116,.5);
+  font-family:'Chakra Petch',system-ui,sans-serif;font-weight:600;
+  font-size:.8em;color:var(--purple-6);opacity:.9;margin:12px 8px 6px;
 }
 
-/* หมุดมุม 4 จุดสีขาวจุ่นๆ บนกล่อง HUD/ปุ่ม — ให้ฟีลสติกเกอร์งานฝีมือ ไม่ใช่แผ่นเรียบโรงงาน */
-.hud-group,.hud-btn{position:relative}
-.hud-group::after,.hud-btn::after{
-  content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  background:
-    radial-gradient(circle at 8px 8px,#ffffff 0 1.6px,transparent 2.4px),
-    radial-gradient(circle at calc(100% - 8px) 8px,#ffffff 0 1.6px,transparent 2.4px),
-    radial-gradient(circle at 8px calc(100% - 8px),#ffffff 0 1.6px,transparent 2.4px),
-    radial-gradient(circle at calc(100% - 8px) calc(100% - 8px),#ffffff 0 1.6px,transparent 2.4px);
-  opacity:.55;
+@media (max-height:700px){
+  header{margin:6px 0 2px}
+  header h1{font-size:.95em}
 }
-
-/* เด้งเบาๆ แบบเยลลี่ — แทน "หายใจ" ทองแดงเดิม */
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-3px)}
-}
-@media (prefers-reduced-motion:reduce){.hud-group{animation:none}.mascot{animation:none}}

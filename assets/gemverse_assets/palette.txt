@@ -1,0 +1,5 @@
+GemVerse — A Tiny Cozy Universe — Palette (Phase 1)
+Purple (dark→light): #170B2C #26184C #3D2A6B #5C3FAE #7C5CFF #9B7CFF #C7B3FF
+Accents: gold #FFD866 / orange #FF9C42 / pink #FF8EC7 / cyan #5FE1FF / white #EAF4FF
+Gems: ruby #FF4D6D / sapphire #3FA9F5 / emerald #34D399 / amethyst #A566FF / topaz #FF9C42 / citrine #FFD866
+Note: hex values are a best-effort reading of the reference style-guide image; visually matched, not pixel-sampled with 100% certainty.
