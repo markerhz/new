@@ -98,12 +98,19 @@ export class Game {
     this.tutorialIconEl = document.getElementById('tutorial-icon');
     this.tutorialTitleEl = document.getElementById('tutorial-title');
     this.tutorialBodyEl = document.getElementById('tutorial-body');
-    this.muteBtn = document.getElementById('mute');
-    if (this.muteBtn) {
-      this.muteBtn.addEventListener('click', () => {
+    this.settingsBtn = document.getElementById('settings');
+    this.settingsEl = document.getElementById('settings-overlay');
+    this.soundToggleBtn = document.getElementById('sound-toggle');
+    this.settingsBtn?.addEventListener('click', () => this.toggleSettings(true));
+    document.getElementById('close-settings')?.addEventListener('click', () => this.toggleSettings(false));
+    this.settingsEl?.addEventListener('click', (event) => {
+      if (event.target === this.settingsEl) this.toggleSettings(false);
+    });
+    if (this.soundToggleBtn) {
+      this.soundToggleBtn.addEventListener('click', () => {
         const muted = this.sfx.toggleMute();
-        this.muteBtn.textContent = muted ? '🔇' : '🔊';
-        this.muteBtn.classList.toggle('muted', muted);
+        this.soundToggleBtn.textContent = muted ? 'OFF' : 'ON';
+        this.soundToggleBtn.classList.toggle('off', muted);
       });
     }
     if (this.retryBtn) this.retryBtn.addEventListener('click', () => this.restartLevel());
@@ -119,6 +126,12 @@ export class Game {
     this.renderLevelMap();
     this.updateHUD(null);
     this.updateLevelHUD();
+  }
+
+  toggleSettings(open) {
+    this.settingsEl?.classList.toggle('show', open);
+    this.settingsEl?.setAttribute('aria-hidden', String(!open));
+    this.settingsBtn?.setAttribute('aria-expanded', String(open));
   }
 
   /**

@@ -55,9 +55,10 @@ console.log('--- Board: กระดานตั้งต้น ---');
 {
   ok(FIRST_PLANET.levels.length === 10, 'ดาวแรกมี 10 ด่าน');
   ok(FIRST_PLANET.levels.slice(0, 3).every((level) => level.tutorial?.title && level.tutorial?.body), 'ด่าน 1-3 มี Tutorial ครบ');
-  ok(starsForScore(FIRST_PLANET.levels[0], 49) === 0, 'คะแนนไม่ถึงเป้าหมายยังไม่ได้ดาว');
-  ok(starsForScore(FIRST_PLANET.levels[0], 150) === 2, 'คำนวณดาวจากเกณฑ์คะแนนได้ถูกต้อง');
-  ok(starsForScore(FIRST_PLANET.levels[0], 999) === 3, 'คะแนนสูงสุดได้ไม่เกิน 3 ดาว');
+  const [oneStar, twoStars, threeStars] = FIRST_PLANET.levels[0].stars;
+  ok(starsForScore(FIRST_PLANET.levels[0], oneStar - 1) === 0, 'คะแนนไม่ถึงเป้าหมายยังไม่ได้ดาว');
+  ok(starsForScore(FIRST_PLANET.levels[0], twoStars) === 2, 'คำนวณดาวจากเกณฑ์คะแนนได้ถูกต้อง');
+  ok(starsForScore(FIRST_PLANET.levels[0], threeStars + 999) === 3, 'คะแนนสูงสุดได้ไม่เกิน 3 ดาว');
 }
 {
   let clean = true;

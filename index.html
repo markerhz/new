@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=045">
 </head>
 <body>
 <div id="app">
@@ -59,16 +59,13 @@
     <h1>🪐 GEMVERSE</h1>
     <p class="tagline">A Tiny Cozy Universe</p>
   </header>
-  <div class="machine-shell" aria-label="เครื่องขุดคริสตัล">
-    <canvas id="game"></canvas>
-  </div>
   <div id="hud">
     <div class="hud-group">
       <div class="hud-box"><span class="hud-icon">⭐</span><span class="hud-text"><span class="hud-label">SCORE</span><span id="score" class="hud-value">0</span></span></div>
       <div class="hud-box"><span class="hud-icon">🎯</span><span class="hud-text"><span class="hud-label">TARGET</span><span id="target" class="hud-value">50</span></span></div>
-      <div class="hud-box"><span class="hud-icon">🧭</span><span class="hud-text"><span class="hud-label">Moves</span><span id="moves" class="hud-value">25</span></span></div>
+      <div class="hud-box"><span class="hud-icon">🧭</span><span class="hud-text"><span class="hud-label">MOVES</span><span id="moves" class="hud-value">15</span></span></div>
     </div>
-    <button id="mute" class="hud-btn" aria-label="เปิด/ปิดเสียง">🔊</button>
+    <button id="settings" class="hud-btn" aria-label="Settings" aria-expanded="false">⚙️</button>
   </div>
   <div id="star-progress" class="star-progress" aria-label="ความคืบหน้าคะแนนสะสมดาว">
     <div class="star-progress-track">
@@ -83,7 +80,19 @@
     <span class="objective score-goal"><span class="objective-gem">✦</span> LEVEL <strong id="current-level">1</strong></span>
     <span class="objective"><span id="lesson">จับคู่เจมให้ได้คะแนน</span></span>
   </div>
-  <p id="hint">แตะไอเทมพิเศษ = ใช้ทันที • ลากไอเทมชนกัน = 💥 คอมโบ • แตะ/ลากเจม 2 ช่องติดกันเพื่อสลับ • เรียง 4 = ☄️ ดาวหาง • บล็อก 2x2 = 🚀 จรวด • L/T = 💣 ระเบิด • เรียง 5 = 🌟 โนวา</p>
+  <div class="machine-shell" aria-label="เครื่องขุดคริสตัล">
+    <canvas id="game"></canvas>
+  </div>
+  <div id="settings-overlay" class="settings-overlay" aria-hidden="true">
+    <div class="settings-panel" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <p class="eyebrow">SHIP SYSTEM</p>
+      <h2 id="settings-title">SETTINGS</h2>
+      <div class="setting-row"><span>SOUND</span><button id="sound-toggle" class="setting-toggle">ON</button></div>
+      <div class="setting-row"><span>MUSIC</span><strong>SOON</strong></div>
+      <div class="setting-row"><span>LANGUAGE</span><strong>TH</strong></div>
+      <button id="close-settings" class="primary-btn">CLOSE</button>
+    </div>
+  </div>
   <div id="tutorial-overlay" class="tutorial-overlay" aria-hidden="true">
     <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
       <div id="tutorial-icon" class="tutorial-icon">↔️</div>
@@ -111,6 +120,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="js/main.js?v=044"></script>
+<script type="module" src="js/main.js?v=045"></script>
 </body>
 </html>
