@@ -128,10 +128,12 @@ export class MatchSystem {
    * @param {() => number} [rng]
    */
   launchRockets(count, originCell, clear, rng = Math.random) {
+    const flights = [];
     for (let i = 0; i < count; i++) {
       const target = this.pickRocketTarget(originCell, clear, rng);
-      if (target) clear.add(target);
+      if (target) { clear.add(target); flights.push({ from: originCell, to: target }); }
     }
+    return flights;
   }
 
   /**
@@ -143,6 +145,7 @@ export class MatchSystem {
    */
   expandClears(clear, rng = Math.random) {
     let bombs = 0, novas = 0, comets = 0, rockets = 0;
+    const rocketFlights = [];
     const processed = new Set();
     let changed = true;
     while (changed) {
@@ -183,11 +186,14 @@ export class MatchSystem {
         } else if (candy.special === 'rocket') {
           rockets++;
           const target = this.pickRocketTarget(cell, clear, rng);
-          if (target) { clear.add(target); changed = true; }
+          if (target) {
+            clear.add(target); changed = true;
+            rocketFlights.push({ from: cell, to: target });
+          }
         }
       }
     }
-    return { bombs, novas, comets, rockets };
+    return { bombs, novas, comets, rockets, rocketFlights };
   }
 
   /**
@@ -195,7 +201,7 @@ export class MatchSystem {
    * ลองสลับทุกคู่ขวา/ล่างบนตารางชนิด (ไม่แตะกระดานจริง) แล้วเช็คว่าเกิด run >= 3 หรือบล็อก 2x2
    * @returns {boolean}
    */
-  hasPossibleMove() {
+  findPossibleMove() {
     const N = this.board.size;
     // ตารางชนิดเบาๆ ไว้ลองสลับ
     const t = [];
@@ -235,10 +241,15 @@ export class MatchSystem {
           const tmp = t[row][col]; t[row][col] = t[r2][c2]; t[r2][c2] = tmp;
           const found = hasRunOrSquare();
           t[r2][c2] = t[row][col]; t[row][col] = tmp; // สลับกลับ
-          if (found) return true;
+          if (found) return {
+            from: this.board.getCell(col, row),
+            to: this.board.getCell(c2, r2),
+          };
         }
       }
     }
-    return false;
+    return null;
   }
+
+  hasPossibleMove() { return this.findPossibleMove() !== null; }
 }

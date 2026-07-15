@@ -15,6 +15,14 @@ export class Effects {
     this.particles = [];
     /** @type {Array<{x:number,y:number,vy:number,life:number,maxLife:number,text:string,color:string,big:boolean}>} */
     this.floaters = [];
+    /** จรวดที่กำลังบิน: progress 0..1, Renderer เป็นผู้วาด */
+    this.rockets = [];
+    /** วงแรงกระแทกของ Bomb */
+    this.bombBlasts = [];
+    /** ลำแสงกวาดของ Comet: axis = h/v */
+    this.cometSweeps = [];
+    /** การดูดแสงและคลื่นขยายของ Nova */
+    this.novaWaves = [];
 
     this.shakeTime = 0;     // เวลาที่เหลือของการสั่น (ms)
     this.shakeDuration = 0; // ระยะเวลารวมของการสั่นชุดปัจจุบัน (ms) — ใช้คิดสัดส่วนสลาย
@@ -45,6 +53,26 @@ export class Effects {
         size: rng() < (power > 1.3 ? 0.5 : 0.3) ? 4 : 2,
       });
     }
+  }
+
+  /** แฟลช + วงแรงกระแทก Bomb; เศษประกายใช้ particle ระบบเดิม */
+  bombBlast(x, y, rng = Math.random) {
+    this.bombBlasts.push({ x, y, life: 440, maxLife: 440 });
+    this.burst(x, y, '#ff9f43', 18, rng, 1.75);
+    this.burst(x, y, '#ffe0a3', 10, rng, 1.25);
+  }
+
+  cometSweep(x, y, axis, rng = Math.random) {
+    this.cometSweeps.push({ x, y, axis, life: 520, maxLife: 520 });
+    this.burst(x, y, '#ffd866', 8, rng, 1.35);
+    this.burst(x, y, '#73d8ff', 10, rng, 1.45);
+    this.burst(x, y, '#a566ff', 8, rng, 1.25);
+  }
+
+  novaWave(x, y, rng = Math.random) {
+    this.novaWaves.push({ x, y, life: 650, maxLife: 650 });
+    this.burst(x, y, '#a98cff', 22, rng, 1.55);
+    this.burst(x, y, '#72dce3', 14, rng, 1.25);
   }
 
   /**
@@ -83,7 +111,7 @@ export class Effects {
 
   /** มีเอฟเฟกต์กำลังเล่นอยู่ไหม (เผื่ออยากรู้เฉยๆ ไม่ได้ใช้ล็อกอินพุต) */
   get busy() {
-    return this.particles.length > 0 || this.floaters.length > 0 || this.shakeTime > 0;
+    return this.particles.length > 0 || this.floaters.length > 0 || this.rockets.length > 0 || this.bombBlasts.length > 0 || this.cometSweeps.length > 0 || this.novaWaves.length > 0 || this.shakeTime > 0;
   }
 
   /** เรียกทุกเฟรมจาก Game (เหมือน Animation.update) */
@@ -104,6 +132,24 @@ export class Effects {
       f.life -= dt;
       if (f.life <= 0) { this.floaters.splice(i, 1); continue; }
       f.y += f.vy * s;
+    }
+
+    for (let i = this.bombBlasts.length - 1; i >= 0; i--) {
+      const b = this.bombBlasts[i];
+      b.life -= dt;
+      if (b.life <= 0) this.bombBlasts.splice(i, 1);
+    }
+
+    for (let i = this.cometSweeps.length - 1; i >= 0; i--) {
+      const c = this.cometSweeps[i];
+      c.life -= dt;
+      if (c.life <= 0) this.cometSweeps.splice(i, 1);
+    }
+
+    for (let i = this.novaWaves.length - 1; i >= 0; i--) {
+      const n = this.novaWaves[i];
+      n.life -= dt;
+      if (n.life <= 0) this.novaWaves.splice(i, 1);
     }
 
     if (this.shakeTime > 0) this.shakeTime = Math.max(0, this.shakeTime - dt);

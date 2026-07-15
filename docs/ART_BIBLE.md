@@ -84,3 +84,34 @@ The player should feel:
 *   **NO Plastic Crystals**: Crystals must have deep, multifaceted textures that look mineral and heavy.
 *   **Handcrafted Feel**: Every edge should have a slight "worn" quality; nothing should look factory-perfect.
 *   **Warm Tech**: All technology must feel analog, heavy, and reliable.
+
+---
+
+## SECTION 10: PIXEL ART REFERENCE LOCK
+
+The canonical visual reference for every asset category is
+`docs/references/pixel_style_board.png`.
+
+All backgrounds, board elements, gems, special gems, UI, icons, particles,
+decorations, characters, tilesets and HUD effects must look as if they belong
+to the same Cozy Purple Galaxy asset pack. Match its pixel density, selective
+outline treatment, top-left lighting, purple-space palette, warm accents and
+soft controlled glow.
+
+The reference defines visual treatment, not permission to redesign gameplay or
+replace the Living Ship direction. New assets must satisfy both this reference
+and Sections 1-9 above.
+
+---
+
+## SECTION 11: PLANET EXPLORER CHARACTER LOCK (FUTURE)
+
+The planet exploration layer uses a side-scrolling 2D pixel-art view. Its
+scale, lighting and palette must remain compatible with the canonical Cozy
+Purple Galaxy reference.
+
+*   **Character**: Female explorer with readable glasses, black curly hair and a pastel spacesuit.
+*   **Silhouette**: Glasses, curls and the suit backpack must remain recognizable at gameplay scale.
+*   **Suit Direction**: Soft lavender, powder blue, cream and restrained warm accents; cozy and exploratory, never military.
+*   **Starter Animation Set**: Idle, walk, interact, item pickup and celebrate. The walk cycle should feel lively but calm.
+*   **Production Order**: Approve one idle pose and one walk cycle in a single vertical-slice scene before producing the full character sheet.

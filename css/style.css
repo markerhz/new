@@ -6,6 +6,8 @@
   --purple-0:#170B2C; --purple-1:#26184C; --purple-2:#3D2A6B; --purple-3:#5C3FAE;
   --purple-4:#7C5CFF; --purple-5:#9B7CFF; --purple-6:#C7B3FF;
   --gold:#FFD866; --orange:#FF9C42; --pink:#FF8EC7; --cyan:#5FE1FF; --white:#EAF4FF;
+  --copper-dark:#4a231e; --copper:#9c5234; --copper-light:#d88a52;
+  --wood:#2b171d; --glass:#130e28; --sage:#76b89b;
 }
 
 *{box-sizing:border-box}
@@ -28,82 +30,226 @@ body{
   height:100%;
 }
 
-header{margin:10px 0 6px}
+.progress-screen{
+  position:fixed;inset:0;z-index:40;display:none;align-items:center;justify-content:center;
+  padding:18px;background:
+    radial-gradient(circle at 24% 18%,rgba(155,124,255,.22),transparent 22%),
+    radial-gradient(circle at 78% 72%,rgba(95,225,255,.1),transparent 25%),
+    linear-gradient(180deg,#0b061c,#170b2c 64%,#090514);
+}
+.progress-screen::before{
+  content:"";position:absolute;inset:0;opacity:.55;pointer-events:none;
+  background-image:radial-gradient(circle,#fff 0 1px,transparent 1.5px);
+  background-size:43px 43px;background-position:7px 13px;
+}
+.progress-screen.show{display:flex}
+.screen-panel{position:relative;z-index:1;width:min(480px,94vw);padding:24px 20px;border:3px solid #5c3fae;border-radius:18px;background:linear-gradient(180deg,rgba(38,24,76,.97),rgba(13,7,32,.98));box-shadow:inset 0 0 0 2px #120927,0 8px 0 #07030d,0 0 34px rgba(124,92,255,.2)}
+.screen-panel h2{font-family:'Press Start 2P',monospace;color:var(--gold);font-size:1.15em;margin:10px 0}
+.screen-panel p{color:#cdbde1;margin:8px 0}
+.eyebrow{font-family:'Press Start 2P',monospace!important;font-size:.58em;letter-spacing:.12em;color:var(--purple-6)!important}
+.planet-orbit{position:relative;width:190px;height:150px;margin:12px auto 4px;border:0;background:transparent;cursor:pointer;display:block}
+.planet-sphere{position:absolute;width:116px;height:116px;left:37px;top:16px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff2bd 0 5%,#c7b3ff 7%,#7c5cff 32%,#3d2a6b 68%,#170b2c 100%);box-shadow:inset -12px -10px 0 rgba(14,6,33,.24),0 0 26px rgba(155,124,255,.55);image-rendering:pixelated}
+.planet-sphere::after{content:"";position:absolute;inset:25px 14px 35px;border-radius:50%;border-top:8px solid rgba(95,225,255,.25);transform:rotate(-14deg)}
+.planet-ring{position:absolute;width:178px;height:48px;left:6px;top:52px;border:7px solid #ffcf66;border-left-color:#8a66ff;border-radius:50%;transform:rotate(-12deg);box-shadow:0 0 10px rgba(255,216,102,.35)}
+.planet-progress{font-family:'Press Start 2P',monospace;font-size:.72em;color:var(--gold);margin:14px}
+.primary-btn,.secondary-btn,.back-btn{font-family:'Press Start 2P',monospace;cursor:pointer}
+.primary-btn{padding:12px 22px;border:3px solid #8d472f;border-radius:8px;background:linear-gradient(#ffcf66,#e77b32);color:#28101a;box-shadow:inset 0 2px #fff0af,0 4px #5a241e}
+.level-panel{padding-top:44px}
+.back-btn{position:absolute;left:16px;top:14px;border:0;background:transparent;color:#bca9dc;font-size:.55em}
+.level-summary{font-family:'Press Start 2P',monospace;font-size:.7em;color:var(--gold)!important}
+.level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0 15px}
+.level-node{position:relative;min-height:69px;padding:8px 3px;border:3px solid #7653b7;border-radius:10px;background:linear-gradient(#49337a,#251742);color:#fff;box-shadow:inset 0 2px rgba(255,255,255,.1),0 4px #100822;cursor:pointer}
+.level-node .number{display:block;font-family:'Press Start 2P',monospace;font-size:.72em;margin:5px 0 8px}
+.level-node .stars{display:block;color:var(--gold);font-size:.73em;letter-spacing:-1px}
+.level-node.locked{filter:grayscale(.7);opacity:.46;cursor:not-allowed}
+.level-node.current{border-color:var(--gold);box-shadow:0 0 14px rgba(255,216,102,.28),0 4px #100822}
+.map-note{font-size:.78em!important}
+.mission-panel{padding-top:44px}
+.brief-lesson{min-height:24px;font-weight:700;color:#e8dcf3!important}
+.brief-rules{display:flex;justify-content:center;gap:12px;margin:18px 0}
+.brief-rules span{min-width:118px;padding:10px;border:2px solid #67469b;border-radius:9px;background:#130b25}
+.brief-rules small{display:block;font-family:'Press Start 2P',monospace;font-size:.52em;color:#bba6d6;margin-bottom:8px}
+.brief-rules strong{font-family:'Press Start 2P',monospace;color:var(--gold);font-size:.9em}
+.star-goal-title{font-family:'Press Start 2P',monospace;font-size:.62em;color:var(--purple-6)!important;margin-top:20px!important}
+.star-thresholds{display:grid;gap:7px;width:min(300px,100%);margin:12px auto 10px}
+.star-thresholds div{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;border:2px solid #4d347a;border-radius:8px;background:linear-gradient(90deg,#1a102f,#281943)}
+.star-thresholds span{letter-spacing:2px}.star-thresholds strong{font-family:'Press Start 2P',monospace;font-size:.67em;color:#fff3bc}
+.brief-note{font-size:.76em!important;margin:14px 0!important}
+.result-stars{font-size:2em;letter-spacing:5px;color:var(--gold);text-shadow:0 0 12px rgba(255,216,102,.45);margin:5px 0 15px}
+.result-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.secondary-btn{padding:10px 14px;border:3px solid #67469b;border-radius:8px;background:#271943;color:#d7c8ec;font-size:.62em;box-shadow:0 4px #100822}
+.result-actions .retry-btn{font-size:.62em;padding:10px 14px}
+.result-actions button[hidden]{display:none}
+
+header{margin:8px 0 8px}
 header h1{
   margin:0;
   font-family:'Press Start 2P','Courier New',monospace;
-  font-size:1.15em;letter-spacing:1px;
-  background:linear-gradient(180deg,var(--purple-6),var(--purple-4));
+  font-size:1.2em;letter-spacing:1px;
+  background:linear-gradient(180deg,#fff4d0 0%,var(--gold) 42%,var(--orange) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:0 0 18px rgba(124,92,255,.5);
+  text-shadow:2px 2px 0 #3a173c,0 0 16px rgba(255,216,102,.26);
 }
 header .tagline{
   margin:6px 0 0;
   font-family:'Chakra Petch',sans-serif;font-weight:700;
-  font-size:.72em;letter-spacing:.12em;text-transform:uppercase;
+  font-size:.74em;letter-spacing:.12em;text-transform:uppercase;
   color:var(--gold);
   text-shadow:0 0 10px rgba(255,216,102,.4);
 }
 
-/* HUD: การ์ดพาเนลจาก Asset Pack (panel_gold.png / panel_dark.png) — stretch แบบพิกเซล คมชัด */
-#hud{display:flex;gap:10px;margin:14px 0 4px;justify-content:center;align-items:stretch}
+/* ตัวเครื่องขุด: กรอบทองแดง/ไม้แบบประกอบด้วยมือ แทนกรอบนีออนลอย ๆ */
+.machine-shell{
+  position:relative;
+  padding:10px;
+  border:3px solid var(--copper-dark);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 7px 7px,#ffe39a 0 2px,#8d4b31 3px 5px,transparent 6px),
+    radial-gradient(circle at calc(100% - 7px) 7px,#ffe39a 0 2px,#8d4b31 3px 5px,transparent 6px),
+    radial-gradient(circle at 7px calc(100% - 7px),#ffe39a 0 2px,#8d4b31 3px 5px,transparent 6px),
+    radial-gradient(circle at calc(100% - 7px) calc(100% - 7px),#ffe39a 0 2px,#8d4b31 3px 5px,transparent 6px),
+    linear-gradient(135deg,var(--copper-light),var(--copper) 22%,#5f3028 55%,var(--copper-light));
+  box-shadow:
+    inset 0 2px 0 rgba(255,227,154,.55),
+    inset 0 -4px 0 rgba(38,12,20,.5),
+    0 8px 0 #160b18,
+    0 14px 28px rgba(0,0,0,.5),
+    0 0 24px rgba(255,156,66,.12);
+}
+.machine-shell::after{
+  content:"AURA LOOM • CRYSTAL INTAKE";
+  position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);
+  padding:2px 10px;border:1px solid #5b3026;border-radius:6px;
+  background:#24141d;color:#eab76f;
+  font-family:'Press Start 2P',monospace;font-size:6px;letter-spacing:.08em;
+  white-space:nowrap;
+}
+
+/* HUD: แผงมาตรวัดติดใต้เครื่องขุด อ่านง่ายและไม่พึ่งไฟล์ภาพภายนอก */
+#hud{display:flex;gap:8px;margin:16px 0 4px;justify-content:center;align-items:stretch}
 .hud-group{
   display:flex;gap:0;
-  background-image:url('../assets/gemverse_assets/05_ui/panel_dark.png');
-  background-size:100% 100%;
-  image-rendering:pixelated;image-rendering:crisp-edges;
-  border-radius:12px;
-  filter:drop-shadow(0 4px 0 rgba(0,0,0,.35));
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.06),transparent 30%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.02) 0 2px,transparent 2px 6px),
+    var(--wood);
+  border:3px solid var(--copper);
+  border-radius:10px;
+  box-shadow:inset 0 0 0 2px #160d19,0 4px 0 #120912,0 8px 16px rgba(0,0,0,.32);
   overflow:hidden;
 }
-.hud-box{display:flex;align-items:center;gap:8px;padding:9px 16px;min-width:96px}
-.hud-group .hud-box+.hud-box{border-left:2px dashed rgba(199,179,255,.25)}
+.hud-box{display:flex;align-items:center;gap:8px;padding:8px 14px;min-width:104px}
+.hud-group .hud-box+.hud-box{border-left:2px solid rgba(216,138,82,.42)}
 .hud-icon{font-size:1.1em;line-height:1;filter:drop-shadow(0 1px 0 rgba(0,0,0,.3))}
 .hud-text{display:flex;flex-direction:column;align-items:flex-start}
 .hud-label{
   display:block;font-family:'Chakra Petch',monospace;font-weight:700;
-  font-size:.58em;color:var(--purple-6);margin-bottom:3px;letter-spacing:.06em;text-transform:uppercase;
+  font-size:.62em;color:#d7b8a0;margin-bottom:3px;letter-spacing:.06em;text-transform:uppercase;
 }
 .hud-value{
   font-family:'Press Start 2P','Courier New',monospace;
-  font-size:.76em;color:var(--gold);text-shadow:0 0 8px rgba(255,216,102,.35);
+  font-size:.8em;color:var(--gold);text-shadow:0 0 6px rgba(255,216,102,.3);
 }
 #mult.hot{color:var(--orange);text-shadow:0 0 10px rgba(255,156,66,.5)}
+
+.star-progress{width:min(370px,86vw);margin:8px auto 2px}
+.star-progress-track{position:relative;height:11px;margin:0 16px;border:2px solid #5b365c;border-radius:7px;background:#10091c;box-shadow:inset 0 2px 3px rgba(0,0,0,.45)}
+.star-progress-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#7c5cff,#ffcf66);box-shadow:0 0 8px rgba(255,216,102,.35);transition:width .24s steps(6,end)}
+.play-star{position:absolute;top:50%;transform:translate(-50%,-50%);font-size:1.05em;line-height:1;color:#8b789b;text-shadow:0 2px #13091d;transition:color .12s,transform .18s}
+.play-star.earned{color:var(--gold);transform:translate(-50%,-50%) scale(1.22);text-shadow:0 0 8px rgba(255,216,102,.75),0 2px #6d361e}
+.next-star-score{display:block;margin-top:6px;font-family:'Press Start 2P',monospace;font-size:.48em;color:#bfaed0}
+
+.tutorial-overlay{position:fixed;inset:0;z-index:25;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(7,3,17,.64);opacity:0;pointer-events:none;transition:opacity .16s steps(3,end)}
+.tutorial-overlay.show{opacity:1;pointer-events:auto}
+.tutorial-card{width:min(360px,90vw);padding:22px 20px;border:4px solid #7653b7;border-radius:14px;background:linear-gradient(180deg,#342255,#160d25);box-shadow:inset 0 0 0 3px #10091a,0 7px 0 #09040d,0 0 28px rgba(155,124,255,.25)}
+.tutorial-icon{font-size:2.2em;filter:drop-shadow(0 0 9px rgba(255,216,102,.38))}
+.tutorial-card h2{font-family:'Press Start 2P',monospace;font-size:.9em;color:var(--gold);line-height:1.55;margin:10px 0}
+.tutorial-card>p:not(.eyebrow){font-weight:600;line-height:1.55;color:#e1d4eb;margin:10px 0 18px}
+
+#objectives{display:flex;gap:8px;justify-content:center;margin:7px 0 0;font-size:.72em}
+.objective{
+  padding:5px 9px;border:2px solid rgba(156,82,52,.7);border-radius:7px;
+  background:rgba(31,17,30,.9);color:#dac8d8;font-weight:700;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 3px 0 #100812;
+}
+.objective strong{font-family:'Press Start 2P',monospace;font-size:.72em;margin-left:5px;color:var(--white)}
+.objective-gem{font-size:1.15em;margin-right:2px;text-shadow:0 0 6px currentColor}
+.objective.ruby .objective-gem{color:#ff4d6d}
+.objective.emerald .objective-gem{color:#34d399}
 
 /* ปุ่มกลม (mute) — โทนเดียวกับกรอบ ไม่ใช้สไปรต์ปุ่ม PLAY/BACK เพราะเป็นไอคอนเดี่ยวไม่ใช่ปุ่มมีข้อความ */
 .hud-btn{
   min-width:auto;display:flex;align-items:center;justify-content:center;
   padding:0 15px;
-  background:linear-gradient(180deg,var(--purple-4),var(--purple-2));
-  border:2px solid var(--purple-5);
-  border-radius:12px;
-  box-shadow:0 4px 0 var(--purple-1),0 6px 10px rgba(0,0,0,.35);
+  background:linear-gradient(180deg,#734a57,#3b2334);
+  border:3px solid var(--copper);
+  border-radius:10px;
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.12),0 4px 0 #160c15,0 7px 12px rgba(0,0,0,.35);
   font-size:1.2em;cursor:pointer;color:#fff;font-family:inherit;
 }
 .hud-btn:active{box-shadow:inset 0 2px 4px rgba(0,0,0,.35);transform:translateY(3px)}
 .hud-btn.muted{opacity:.5;filter:grayscale(.4)}
 
-/* canvas: กรอบทองอ่อนตัดกับม่วงเข้ม ให้ความรู้สึก "หน้าต่างมองอวกาศ" */
+/* กระจกกักเก็บคริสตัลอยู่ด้านในตัวเครื่อง */
 canvas#game{
-  border:5px solid var(--purple-3);
-  border-radius:14px;
+  border:3px solid #20152f;
+  border-radius:10px;
   background:var(--purple-0);
   display:block;
   image-rendering:pixelated;image-rendering:crisp-edges;
   box-shadow:
-    inset 0 0 0 2px rgba(255,216,102,.35),
-    0 0 0 1px var(--purple-1),
-    0 10px 26px rgba(0,0,0,.55),
-    0 0 40px rgba(124,92,255,.25);
+    inset 0 0 0 2px rgba(255,224,165,.15),
+    0 0 0 2px #0b0714,
+    0 0 18px rgba(255,156,66,.1);
   touch-action:none;
 }
 
 #hint{
   font-family:'Chakra Petch',system-ui,sans-serif;font-weight:600;
-  font-size:.8em;color:var(--purple-6);opacity:.9;margin:12px 8px 6px;
+  max-width:520px;font-size:.78em;color:#cdbbd8;opacity:.84;margin:10px 8px 6px;
 }
+
+.level-result{
+  position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;
+  padding:20px;background:rgba(7,3,17,.76);opacity:0;pointer-events:none;
+  transition:opacity .18s steps(3,end);
+}
+.level-result.show{opacity:1;pointer-events:auto}
+.result-panel{
+  width:min(390px,92vw);padding:24px 20px 20px;border:4px solid var(--copper);
+  border-radius:14px;background:linear-gradient(180deg,#30204d,#160d25 72%);
+  box-shadow:inset 0 0 0 3px #10091a,0 8px 0 #09040d,0 0 30px rgba(255,156,66,.2);
+}
+.result-icon{font-size:2.2em;filter:drop-shadow(0 0 10px rgba(255,216,102,.45))}
+.result-panel h2{font-family:'Press Start 2P',monospace;font-size:1em;line-height:1.5;color:var(--gold);margin:14px 0 10px}
+.level-result.lose .result-panel h2{color:#ff8e9e}
+.result-panel p{margin:0 0 16px;color:#d9c9e3;font-weight:600}
+.result-stats{display:flex;justify-content:center;gap:10px;margin-bottom:18px}
+.result-stats span{padding:8px 10px;border:2px solid #5b365c;border-radius:7px;background:#100a1d;font-size:.7em;color:#bda8c9}
+.result-stats strong{display:block;margin-top:5px;font-family:'Press Start 2P',monospace;color:var(--white)}
+.retry-btn{
+  padding:11px 22px;border:3px solid #8d472f;border-radius:8px;background:linear-gradient(#ffbd55,#d66b2d);
+  color:#2b1015;font-family:'Press Start 2P',monospace;font-size:.72em;cursor:pointer;
+  box-shadow:inset 0 2px 0 #ffe7a8,0 4px 0 #5a241e;
+}
+.retry-btn:active{transform:translateY(3px);box-shadow:inset 0 2px 3px rgba(0,0,0,.3),0 1px 0 #5a241e}
 
 @media (max-height:700px){
   header{margin:6px 0 2px}
   header h1{font-size:.95em}
+}
+
+@media (max-width:430px){
+  #app{padding:6px}
+  header h1{font-size:1.02em}
+  header .tagline{font-size:.68em}
+  .machine-shell{padding:7px;border-radius:16px}
+  #hud{margin-top:14px;gap:6px}
+  .hud-box{padding:7px 9px;min-width:92px;gap:6px}
+  #objectives{font-size:.64em;gap:5px}
+  .star-progress{width:min(330px,84vw)}
+  .hud-btn{padding:0 12px}
+  #hint{font-size:.68em;line-height:1.45;margin-top:8px}
+  .level-grid{gap:7px}.level-node{min-height:63px}.screen-panel{padding-left:13px;padding-right:13px}
 }

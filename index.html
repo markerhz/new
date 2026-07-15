@@ -12,20 +12,105 @@
 </head>
 <body>
 <div id="app">
+  <section id="planet-screen" class="progress-screen show" aria-label="แผนที่จักรวาล">
+    <div class="screen-panel planet-panel">
+      <p class="eyebrow">FIRST DESTINATION</p>
+      <button id="open-planet" class="planet-orbit" aria-label="เข้าสู่ดาว Luma">
+        <span class="planet-sphere"></span>
+        <span class="planet-ring"></span>
+      </button>
+      <h2>LUMA</h2>
+      <p>ดาวแห่งแสงแรก • Tutorial Planet</p>
+      <div class="planet-progress"><span id="planet-stars">0</span> / 30 ⭐</div>
+      <button id="enter-planet" class="primary-btn">เข้าสู่ดาว</button>
+    </div>
+  </section>
+  <section id="level-screen" class="progress-screen" aria-label="เลือกด่านบนดาว Luma">
+    <div class="screen-panel level-panel">
+      <button id="back-to-space" class="back-btn">← SPACE MAP</button>
+      <p class="eyebrow">PLANET LUMA</p>
+      <h2>เลือกด่าน</h2>
+      <p class="level-summary"><span id="level-stars-total">0</span> / 30 ⭐</p>
+      <div id="level-grid" class="level-grid"></div>
+      <p class="map-note">เก็บดาวเพิ่มด้วยการทำคะแนนให้สูงขึ้น</p>
+    </div>
+  </section>
+  <section id="mission-screen" class="progress-screen" aria-label="เป้าหมายก่อนเริ่มด่าน">
+    <div class="screen-panel mission-panel">
+      <button id="back-to-levels" class="back-btn">← LEVELS</button>
+      <p class="eyebrow">MISSION BRIEFING</p>
+      <h2>LEVEL <span id="brief-level">1</span></h2>
+      <p id="brief-lesson" class="brief-lesson">จับคู่เจมให้ได้คะแนน</p>
+      <div class="brief-rules">
+        <span><small>TARGET</small><strong id="brief-target">50</strong></span>
+        <span><small>MOVES</small><strong id="brief-moves">15</strong></span>
+      </div>
+      <p class="star-goal-title">เป้าหมายสะสมดาว</p>
+      <div class="star-thresholds">
+        <div><span>⭐</span><strong id="brief-star-1">50</strong></div>
+        <div><span>⭐⭐</span><strong id="brief-star-2">150</strong></div>
+        <div><span>⭐⭐⭐</span><strong id="brief-star-3">250</strong></div>
+      </div>
+      <p class="brief-note">ทำคะแนนให้ถึงเกณฑ์ก่อน Moves หมด</p>
+      <button id="start-level" class="primary-btn">เริ่มด่าน</button>
+    </div>
+  </section>
   <header>
     <h1>🪐 GEMVERSE</h1>
     <p class="tagline">A Tiny Cozy Universe</p>
   </header>
-  <canvas id="game"></canvas>
+  <div class="machine-shell" aria-label="เครื่องขุดคริสตัล">
+    <canvas id="game"></canvas>
+  </div>
   <div id="hud">
     <div class="hud-group">
-      <div class="hud-box"><span class="hud-icon">⭐</span><span class="hud-text"><span class="hud-label">คะแนน</span><span id="score" class="hud-value">0</span></span></div>
-      <div class="hud-box"><span class="hud-icon">🔥</span><span class="hud-text"><span class="hud-label">ทวีคูณ</span><span id="mult" class="hud-value">x1.0</span></span></div>
+      <div class="hud-box"><span class="hud-icon">⭐</span><span class="hud-text"><span class="hud-label">SCORE</span><span id="score" class="hud-value">0</span></span></div>
+      <div class="hud-box"><span class="hud-icon">🎯</span><span class="hud-text"><span class="hud-label">TARGET</span><span id="target" class="hud-value">50</span></span></div>
+      <div class="hud-box"><span class="hud-icon">🧭</span><span class="hud-text"><span class="hud-label">Moves</span><span id="moves" class="hud-value">25</span></span></div>
     </div>
     <button id="mute" class="hud-btn" aria-label="เปิด/ปิดเสียง">🔊</button>
   </div>
-  <p id="hint">แตะ/ลาก 2 ช่องติดกันเพื่อสลับ • เรียง 4 = ☄️ ดาวหาง • บล็อก 2x2 = 🚀 จรวด • L/T = 💣 ระเบิด • เรียง 5 = 🌟 โนวา • สลับ 2 ตัวพิเศษ = 💥 คอมโบใหญ่</p>
+  <div id="star-progress" class="star-progress" aria-label="ความคืบหน้าคะแนนสะสมดาว">
+    <div class="star-progress-track">
+      <div id="star-progress-fill" class="star-progress-fill"></div>
+      <span id="play-star-1" class="play-star">☆</span>
+      <span id="play-star-2" class="play-star">☆</span>
+      <span id="play-star-3" class="play-star">☆</span>
+    </div>
+    <span id="next-star-score" class="next-star-score">อีก 50 คะแนน → ⭐</span>
+  </div>
+  <div id="objectives" aria-label="เป้าหมายด่าน">
+    <span class="objective score-goal"><span class="objective-gem">✦</span> LEVEL <strong id="current-level">1</strong></span>
+    <span class="objective"><span id="lesson">จับคู่เจมให้ได้คะแนน</span></span>
+  </div>
+  <p id="hint">แตะไอเทมพิเศษ = ใช้ทันที • ลากไอเทมชนกัน = 💥 คอมโบ • แตะ/ลากเจม 2 ช่องติดกันเพื่อสลับ • เรียง 4 = ☄️ ดาวหาง • บล็อก 2x2 = 🚀 จรวด • L/T = 💣 ระเบิด • เรียง 5 = 🌟 โนวา</p>
+  <div id="tutorial-overlay" class="tutorial-overlay" aria-hidden="true">
+    <div class="tutorial-card" role="dialog" aria-modal="true" aria-labelledby="tutorial-title">
+      <div id="tutorial-icon" class="tutorial-icon">↔️</div>
+      <p class="eyebrow">CAPTAIN'S TIP</p>
+      <h2 id="tutorial-title">สลับเจม</h2>
+      <p id="tutorial-body">แตะเจมสองช่องที่อยู่ติดกันเพื่อสลับ</p>
+      <button id="tutorial-ok" class="primary-btn">ลองเลย</button>
+    </div>
+  </div>
+  <div id="level-result" class="level-result" aria-hidden="true">
+    <div class="result-panel" role="dialog" aria-modal="true" aria-labelledby="result-title">
+      <div class="result-icon" id="result-icon">🪐</div>
+      <h2 id="result-title">MISSION COMPLETE</h2>
+      <p id="result-message"></p>
+      <div id="result-stars" class="result-stars" aria-label="ดาวที่ได้รับ">☆☆☆</div>
+      <div class="result-stats">
+        <span>SCORE <strong id="result-score">0</strong></span>
+        <span>TARGET <strong id="result-goals">0</strong></span>
+      </div>
+      <div class="result-actions">
+        <button id="level-select" class="secondary-btn">LEVELS</button>
+        <button id="retry" class="retry-btn">RETRY</button>
+        <button id="next-level" class="retry-btn">NEXT</button>
+      </div>
+    </div>
+  </div>
 </div>
-<script type="module" src="js/main.js"></script>
+<script type="module" src="js/main.js?v=044"></script>
 </body>
 </html>

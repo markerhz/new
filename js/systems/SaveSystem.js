@@ -8,14 +8,14 @@
  *   v0.5.0 — sync กับเซิร์ฟเวอร์ (ระบบออนไลน์)
  */
 export class SaveSystem {
-  static KEY = 'sweetverse-cosmic-save';
+  static KEY = 'gemverse-progress-v1';
 
   /**
    * บันทึกสถานะเกม
    * @param {object} data สถานะที่จะบันทึก
    */
   save(data) {
-    // TODO v0.4.0: localStorage.setItem(SaveSystem.KEY, JSON.stringify(data))
+    try { localStorage.setItem(SaveSystem.KEY, JSON.stringify(data)); } catch (_) { /* storage unavailable */ }
   }
 
   /**
@@ -23,11 +23,13 @@ export class SaveSystem {
    * @returns {object|null}
    */
   load() {
-    // TODO v0.4.0
-    return null;
+    try {
+      const data = JSON.parse(localStorage.getItem(SaveSystem.KEY));
+      return data && typeof data === 'object' ? data : null;
+    } catch (_) { return null; }
   }
 
   clear() {
-    // TODO v0.4.0
+    try { localStorage.removeItem(SaveSystem.KEY); } catch (_) { /* storage unavailable */ }
   }
 }

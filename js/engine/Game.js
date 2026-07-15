@@ -9,17 +9,19 @@
  *
  * ลูปหลัก: requestAnimationFrame → update(dt) → draw
  */
-import { Renderer } from './Renderer.js';
+import { Renderer } from './Renderer.js?v=044';
 import { Input } from './Input.js';
 import { Animation, Easing } from './Animation.js';
-import { Effects } from './Effects.js';
+import { Effects } from './Effects.js?v=044';
 import { Sfx } from './Sfx.js';
 import { Board } from '../board/Board.js';
 import { Candy } from '../board/Candy.js';
-import { MatchSystem } from '../systems/MatchSystem.js';
+import { MatchSystem } from '../systems/MatchSystem.js?v=037';
 import { GravitySystem } from '../systems/GravitySystem.js';
 import { ScoreSystem } from '../systems/ScoreSystem.js';
+import { LevelSystem } from '../systems/LevelSystem.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
+import { FIRST_PLANET, starsForScore } from '../systems/LevelCatalog.js';
 
 /** สถานะของเกม */
 const State = {
@@ -48,7 +50,12 @@ export class Game {
     this.matchSystem = new MatchSystem(this.board);
     this.gravitySystem = new GravitySystem(this.board);
     this.scoreSystem = new ScoreSystem();
+    this.currentLevel = FIRST_PLANET.levels[0];
+    this.levelSystem = new LevelSystem(this.currentLevel);
     this.saveSystem = new SaveSystem();
+    this.progress = this.saveSystem.load() || { unlocked: 1, levels: {}, tutorials: {} };
+    this.progress.levels ||= {};
+    this.progress.tutorials ||= {};
     this.sfx = new Sfx();
 
     // ---- Input ----
@@ -63,10 +70,34 @@ export class Game {
 
     /** hit-stop: หยุดอนิเมชัน/เอฟเฟกต์สั้นๆ ตอนอิมแพกต์ใหญ่ (ยังวาดต่อ) — จูซคลาสสิก */
     this.freezeTime = 0;
+    this.gameplayActive = false;
+    this.idleMs = 0;
+    this.hintMove = null;
 
     // ---- HUD (DOM) ----
     this.scoreEl = document.getElementById('score');
     this.multEl = document.getElementById('mult');
+    this.movesEl = document.getElementById('moves');
+    this.targetEl = document.getElementById('target');
+    this.currentLevelEl = document.getElementById('current-level');
+    this.lessonEl = document.getElementById('lesson');
+    this.starProgressFillEl = document.getElementById('star-progress-fill');
+    this.playStarEls = [1, 2, 3].map((i) => document.getElementById(`play-star-${i}`));
+    this.nextStarScoreEl = document.getElementById('next-star-score');
+    this.resultEl = document.getElementById('level-result');
+    this.resultTitleEl = document.getElementById('result-title');
+    this.resultIconEl = document.getElementById('result-icon');
+    this.resultMessageEl = document.getElementById('result-message');
+    this.resultScoreEl = document.getElementById('result-score');
+    this.resultGoalsEl = document.getElementById('result-goals');
+    this.resultStarsEl = document.getElementById('result-stars');
+    this.retryBtn = document.getElementById('retry');
+    this.nextLevelBtn = document.getElementById('next-level');
+    this.levelSelectBtn = document.getElementById('level-select');
+    this.tutorialEl = document.getElementById('tutorial-overlay');
+    this.tutorialIconEl = document.getElementById('tutorial-icon');
+    this.tutorialTitleEl = document.getElementById('tutorial-title');
+    this.tutorialBodyEl = document.getElementById('tutorial-body');
     this.muteBtn = document.getElementById('mute');
     if (this.muteBtn) {
       this.muteBtn.addEventListener('click', () => {
@@ -75,7 +106,19 @@ export class Game {
         this.muteBtn.classList.toggle('muted', muted);
       });
     }
+    if (this.retryBtn) this.retryBtn.addEventListener('click', () => this.restartLevel());
+    if (this.nextLevelBtn) this.nextLevelBtn.addEventListener('click', () => this.startNextLevel());
+    if (this.levelSelectBtn) this.levelSelectBtn.addEventListener('click', () => this.showLevelSelect());
+    const openPlanet = () => this.showLevelSelect();
+    document.getElementById('open-planet')?.addEventListener('click', openPlanet);
+    document.getElementById('enter-planet')?.addEventListener('click', openPlanet);
+    document.getElementById('back-to-space')?.addEventListener('click', () => this.showPlanetMap());
+    document.getElementById('back-to-levels')?.addEventListener('click', () => this.showLevelSelect());
+    document.getElementById('start-level')?.addEventListener('click', () => this.beginSelectedLevel());
+    document.getElementById('tutorial-ok')?.addEventListener('click', () => this.dismissTutorial());
+    this.renderLevelMap();
     this.updateHUD(null);
+    this.updateLevelHUD();
   }
 
   /**
@@ -88,6 +131,173 @@ export class Game {
       this.multEl.textContent = result ? 'x' + result.mult.toFixed(1) : 'x1.0';
       this.multEl.classList.toggle('hot', !!result && result.mult > 1);
     }
+    this.updateStarProgress();
+  }
+
+  updateStarProgress() {
+    const thresholds = this.currentLevel.stars;
+    const score = this.scoreSystem.score;
+    const max = thresholds[2];
+    if (this.starProgressFillEl) this.starProgressFillEl.style.width = `${Math.min(100, score / max * 100)}%`;
+    this.playStarEls.forEach((star, index) => {
+      if (!star) return;
+      const earned = score >= thresholds[index];
+      star.textContent = earned ? '★' : '☆';
+      star.classList.toggle('earned', earned);
+      star.style.left = `${thresholds[index] / max * 100}%`;
+      star.setAttribute('aria-label', `${index + 1} ดาว ที่ ${thresholds[index]} คะแนน${earned ? ' ได้แล้ว' : ''}`);
+    });
+    if (this.nextStarScoreEl) {
+      const nextIndex = thresholds.findIndex((threshold) => score < threshold);
+      this.nextStarScoreEl.textContent = nextIndex < 0
+        ? 'เก็บครบ 3 ดาวแล้ว!'
+        : `อีก ${thresholds[nextIndex] - score} คะแนน → ${'⭐'.repeat(nextIndex + 1)}`;
+    }
+  }
+
+  updateLevelHUD() {
+    if (this.movesEl) this.movesEl.textContent = this.levelSystem.moves;
+    if (this.targetEl) this.targetEl.textContent = this.currentLevel.target;
+    if (this.currentLevelEl) this.currentLevelEl.textContent = this.currentLevel.id;
+    if (this.lessonEl) this.lessonEl.textContent = this.currentLevel.lesson;
+  }
+
+  renderLevelMap() {
+    const grid = document.getElementById('level-grid');
+    if (!grid) return;
+    grid.replaceChildren();
+    let totalStars = 0;
+    for (const level of FIRST_PLANET.levels) {
+      const saved = this.progress.levels[level.id] || { stars: 0, bestScore: 0 };
+      totalStars += saved.stars || 0;
+      const unlocked = level.id <= this.progress.unlocked;
+      const button = document.createElement('button');
+      button.className = `level-node${unlocked ? '' : ' locked'}${level.id === this.progress.unlocked ? ' current' : ''}`;
+      button.disabled = !unlocked;
+      button.setAttribute('aria-label', unlocked ? `ด่าน ${level.id} ได้ ${saved.stars || 0} ดาว` : `ด่าน ${level.id} ยังไม่ปลดล็อก`);
+      button.innerHTML = `<span class="number">${unlocked ? level.id : '🔒'}</span><span class="stars">${'★'.repeat(saved.stars || 0)}${'☆'.repeat(3 - (saved.stars || 0))}</span>`;
+      if (unlocked) button.addEventListener('click', () => this.selectLevel(level.id));
+      grid.appendChild(button);
+    }
+    const totalEl = document.getElementById('level-stars-total');
+    const planetEl = document.getElementById('planet-stars');
+    if (totalEl) totalEl.textContent = totalStars;
+    if (planetEl) planetEl.textContent = totalStars;
+  }
+
+  showPlanetMap() {
+    this.gameplayActive = false;
+    document.getElementById('planet-screen')?.classList.add('show');
+    document.getElementById('level-screen')?.classList.remove('show');
+    document.getElementById('mission-screen')?.classList.remove('show');
+  }
+
+  showLevelSelect() {
+    this.gameplayActive = false;
+    this.renderLevelMap();
+    document.getElementById('planet-screen')?.classList.remove('show');
+    document.getElementById('level-screen')?.classList.add('show');
+    document.getElementById('mission-screen')?.classList.remove('show');
+    this.resultEl?.classList.remove('show', 'win', 'lose');
+  }
+
+  selectLevel(levelId) {
+    const level = FIRST_PLANET.levels.find((item) => item.id === levelId);
+    if (!level || levelId > this.progress.unlocked) return;
+    this.currentLevel = level;
+    document.getElementById('level-screen')?.classList.remove('show');
+    document.getElementById('planet-screen')?.classList.remove('show');
+    document.getElementById('mission-screen')?.classList.add('show');
+    document.getElementById('brief-level').textContent = level.id;
+    document.getElementById('brief-lesson').textContent = level.lesson;
+    document.getElementById('brief-target').textContent = level.target;
+    document.getElementById('brief-moves').textContent = level.moves;
+    level.stars.forEach((score, index) => {
+      document.getElementById(`brief-star-${index + 1}`).textContent = score;
+    });
+  }
+
+  beginSelectedLevel() {
+    document.getElementById('mission-screen')?.classList.remove('show');
+    this.restartLevel();
+    this.showTutorialIfNeeded();
+  }
+
+  showTutorialIfNeeded() {
+    const tutorial = this.currentLevel.tutorial;
+    if (!tutorial || this.progress.tutorials[this.currentLevel.id]) return;
+    this.gameplayActive = false;
+    this.resetMoveHint();
+    if (this.tutorialIconEl) this.tutorialIconEl.textContent = tutorial.icon;
+    if (this.tutorialTitleEl) this.tutorialTitleEl.textContent = tutorial.title;
+    if (this.tutorialBodyEl) this.tutorialBodyEl.textContent = tutorial.body;
+    this.tutorialEl?.classList.add('show');
+    this.tutorialEl?.setAttribute('aria-hidden', 'false');
+  }
+
+  dismissTutorial() {
+    this.tutorialEl?.classList.remove('show');
+    this.tutorialEl?.setAttribute('aria-hidden', 'true');
+    this.progress.tutorials[this.currentLevel.id] = true;
+    this.saveSystem.save(this.progress);
+    this.gameplayActive = true;
+    this.resetMoveHint();
+  }
+
+  showLevelResult() {
+    const won = this.levelSystem.complete;
+    if (!won && this.levelSystem.moves > 0) return;
+    if (!this.resultEl) return;
+    this.gameplayActive = false;
+    this.resetMoveHint();
+    const stars = won ? starsForScore(this.currentLevel, this.scoreSystem.score) : 0;
+    this.resultEl.classList.toggle('win', won);
+    this.resultEl.classList.toggle('lose', !won);
+    this.resultEl.classList.add('show');
+    this.resultEl.setAttribute('aria-hidden', 'false');
+    if (this.resultTitleEl) this.resultTitleEl.textContent = won ? 'MISSION COMPLETE' : 'MISSION FAILED';
+    if (this.resultIconEl) this.resultIconEl.textContent = won ? '✨' : '🛠️';
+    if (this.resultMessageEl) this.resultMessageEl.textContent = won ? 'ขุดคริสตัลเป้าหมายครบแล้ว!' : 'Moves หมดแล้ว ลองวางแผนคอมโบใหม่อีกครั้ง';
+    if (this.resultScoreEl) this.resultScoreEl.textContent = this.scoreSystem.score;
+    if (this.resultGoalsEl) this.resultGoalsEl.textContent = this.currentLevel.target;
+    if (this.resultStarsEl) this.resultStarsEl.textContent = `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}`;
+    if (this.nextLevelBtn) this.nextLevelBtn.hidden = !won || this.currentLevel.id >= FIRST_PLANET.levels.length;
+    if (won) {
+      const previous = this.progress.levels[this.currentLevel.id] || { stars: 0, bestScore: 0 };
+      this.progress.levels[this.currentLevel.id] = {
+        stars: Math.max(previous.stars || 0, stars),
+        bestScore: Math.max(previous.bestScore || 0, this.scoreSystem.score),
+      };
+      this.progress.unlocked = Math.max(this.progress.unlocked, Math.min(this.currentLevel.id + 1, FIRST_PLANET.levels.length));
+      this.saveSystem.save(this.progress);
+      this.renderLevelMap();
+    }
+  }
+
+  restartLevel() {
+    this.levelSystem = new LevelSystem(this.currentLevel);
+    this.scoreSystem.reset();
+    this.board.fillRandom();
+    let guard = 0;
+    while (!this.matchSystem.hasPossibleMove() && ++guard < 20) this.board.fillRandom();
+    this.animation = new Animation();
+    this.effects = new Effects();
+    this.selected = null;
+    this.freezeTime = 0;
+    this.gameplayActive = true;
+    this.resetMoveHint();
+    this.state = State.IDLE;
+    if (this.resultEl) {
+      this.resultEl.classList.remove('show', 'win', 'lose');
+      this.resultEl.setAttribute('aria-hidden', 'true');
+    }
+    this.updateHUD(null);
+    this.updateLevelHUD();
+  }
+
+  startNextLevel() {
+    const next = Math.min(this.currentLevel.id + 1, FIRST_PLANET.levels.length);
+    this.selectLevel(next);
   }
 
   /** เริ่มลูปหลัก */
@@ -105,7 +315,12 @@ export class Game {
       this.animation.update(dt);
       this.effects.update(dt);
     }
-    this.renderer.draw(this.board, this.selected, time, this.effects);
+    if (this.gameplayActive && this.state === State.IDLE && this.levelSystem.canMove) {
+      this.idleMs += dt;
+      if (!this.hintMove && this.idleMs >= 6500) this.hintMove = this.matchSystem.findPossibleMove();
+    }
+    if (this.hintMove) this.applyHintMotion(time);
+    this.renderer.draw(this.board, this.selected, time, this.effects, this.hintMove);
 
     requestAnimationFrame((t) => this.loop(t));
   }
@@ -115,16 +330,43 @@ export class Game {
     this.freezeTime = Math.max(this.freezeTime, ms);
   }
 
+  resetMoveHint() {
+    if (this.hintMove) {
+      for (const cell of [this.hintMove.from, this.hintMove.to]) {
+        if (cell.candy) { cell.candy.offsetX = 0; cell.candy.offsetY = 0; }
+      }
+    }
+    this.idleMs = 0;
+    this.hintMove = null;
+  }
+
+  applyHintMotion(time) {
+    const { from, to } = this.hintMove;
+    if (!from.candy || !to.candy) return this.resetMoveHint();
+    const dx = Math.sign(to.col - from.col), dy = Math.sign(to.row - from.row);
+    const nudge = 1.5 + 1.5 * Math.sin(time / 240);
+    from.candy.offsetX = dx * nudge; from.candy.offsetY = dy * nudge;
+    to.candy.offsetX = -dx * nudge; to.candy.offsetY = -dy * nudge;
+  }
+
   // =====================================================
   // การเลือก + สลับ
   // =====================================================
 
   /** ผู้เล่นแตะช่อง (col,row) */
   handleTap(pos) {
+    this.resetMoveHint();
     this.sfx.ensureCtx(); // ปลุก AudioContext (ต้องทำหลัง gesture ผู้ใช้เท่านั้น) — เรียกซ้ำได้ ราคาถูก
-    if (this.state !== State.IDLE) return;
+    if (this.state !== State.IDLE || !this.levelSystem.canMove) return;
     const cell = this.board.getCell(pos.col, pos.row);
     if (!cell || cell.isEmpty) return;
+
+    // แตะไอเทมพิเศษครั้งเดียว = ใช้ทันที (หากต้องการคอมโบกับไอเทมข้างๆ ยังใช้การปัดได้)
+    if (cell.candy.special) {
+      this.selected = null;
+      this.activateSpecialTap(cell);
+      return;
+    }
 
     // ยังไม่ได้เลือกอะไร → เลือกช่องนี้
     if (!this.selected) {
@@ -152,14 +394,45 @@ export class Game {
 
   /** ผู้เล่นปัดจากช่อง (col,row) ไปทิศติดกัน — สลับทันทีโดยไม่ต้องแตะ 2 ครั้ง */
   handleSwipe(fromPos, toPos) {
+    this.resetMoveHint();
     this.sfx.ensureCtx();
-    if (this.state !== State.IDLE) return;
+    if (this.state !== State.IDLE || !this.levelSystem.canMove) return;
     const from = this.board.getCell(fromPos.col, fromPos.row);
     const to = this.board.getCell(toPos.col, toPos.row);
     if (!from || !to || from.isEmpty || to.isEmpty) return;
 
     this.selected = null; // ปัดตัดการเลือกค้างจากแท็บก่อนหน้าทิ้ง
     this.swap(from, to);
+  }
+
+  /** แตะใช้ไอเทมพิเศษจากช่องเดิม โดยไม่ต้องสลับกับเจมข้างเคียง */
+  async activateSpecialTap(cell) {
+    if (this.state !== State.IDLE || !cell.candy || !cell.candy.special) return;
+    this.state = State.ANIMATING;
+    this.levelSystem.useMove();
+    this.updateLevelHUD();
+    const clear = new Set([cell]);
+
+    const info = this.matchSystem.expandClears(clear);
+    await this.animateRocketFlights(info.rocketFlights);
+    await this.clearStep(clear, [], {
+      chain: 1,
+      bombs: info.bombs,
+      novas: info.novas,
+      comets: info.comets,
+      rockets: info.rockets,
+    });
+    await this.dropAndRefill();
+    await this.resolveCascade(this.matchSystem.findMatches(), null, 2);
+
+    if (!this.matchSystem.hasPossibleMove()) {
+      let guard = 0;
+      do {
+        this.board.fillRandom();
+      } while (!this.matchSystem.hasPossibleMove() && ++guard < 20);
+    }
+    this.state = State.IDLE;
+    this.showLevelResult();
   }
 
   /**
@@ -175,12 +448,15 @@ export class Game {
     const sa = a.candy && a.candy.special, sb = b.candy && b.candy.special;
 
     if (sa && sb) {
+      this.levelSystem.useMove(); this.updateLevelHUD();
       // ตัวพิเศษ 2 ตัวชนกัน = คอมโบรวมร่าง
       await this.activateSpecialSwap(a, b);
     } else if (sa === 'nova' || sb === 'nova') {
+      this.levelSystem.useMove(); this.updateLevelHUD();
       // โนวาเดี่ยว + เม็ดปกติ = ล้างสีของอีกฝั่ง
       await this.activateNovaSwap(a, b);
     } else if (sa || sb) {
+      this.levelSystem.useMove(); this.updateLevelHUD();
       // จรวด/ระเบิดเดี่ยว + เม็ดปกติ = จุดชนวนในที่
       await this.activateSpecialSwap(a, b);
     } else {
@@ -194,6 +470,7 @@ export class Game {
         return;
       }
       // ตัวพิเศษเกิดตรงช่องปลายทางที่ผู้เล่นสลับไป (b)
+      this.levelSystem.useMove(); this.updateLevelHUD();
       await this.resolveCascade(matches, b);
     }
 
@@ -206,6 +483,7 @@ export class Game {
     }
 
     this.state = State.IDLE;
+    this.showLevelResult();
   }
 
   /** สลับข้อมูล + เลื่อนภาพนุ่มๆ แบบ ease-in-out พร้อมบีบ/ยืดตามแนวสลับ (เรียกซ้ำ = สลับกลับ) */
@@ -243,6 +521,7 @@ export class Game {
     while (matches.length > 0) {
       const { clear, spawns } = this.matchSystem.planClears(matches, chain === startChain ? swapCell : null);
       const info = this.matchSystem.expandClears(clear);
+      await this.animateRocketFlights(info.rocketFlights);
       await this.clearStep(clear, spawns, { chain, bombs: info.bombs, novas: info.novas, comets: info.comets, rockets: info.rockets });
       await this.dropAndRefill();
 
@@ -270,10 +549,14 @@ export class Game {
       });
     }
 
+    // ซ่อนไอเทมก่อนปิด special กันเฟรมที่วาดกลับเป็นเจมธรรมดาระหว่างเตรียมเอฟเฟกต์
+    novaCell.candy.scale = 0;
     // ตั้ง special ของโนวาเป็น null ก่อนขยาย — กันโนวาตัวเองยิงล้างสีสุ่มซ้ำ
     novaCell.candy.special = null;
     const info = this.matchSystem.expandClears(clear);
-    await this.clearStep(clear, [], { chain: 1, bombs: info.bombs, novas: info.novas + 1, comets: info.comets, rockets: info.rockets });
+    await this.animateRocketFlights(info.rocketFlights);
+    await this.clearStep(clear, [], { chain: 1, bombs: info.bombs, novas: info.novas + 1, comets: info.comets, rockets: info.rockets,
+      novaOrigins: [[novaCell.col * Renderer.CELL + Renderer.CELL / 2, novaCell.row * Renderer.CELL + Renderer.CELL / 2]] });
     await this.dropAndRefill();
 
     // ต่อ cascade ตามปกติ (นับเป็นชั้น 2 ขึ้นไป)
@@ -299,7 +582,11 @@ export class Game {
     const add = (c, r) => { const cc = this.board.getCell(c, r); if (cc && cc.candy) clear.add(cc); };
     const addRow = (r) => { for (let i = 0; i < N; i++) add(i, r); };
     const addCol = (c) => { for (let i = 0; i < N; i++) add(c, i); };
+    const point = (cell) => [cell.col * Renderer.CELL + Renderer.CELL / 2, cell.row * Renderer.CELL + Renderer.CELL / 2];
     let rocketsFired = 0;
+    const rocketFlights = [];
+    const bombOrigins = [];
+    const cometOrigins = [];
 
     if (both && isNova) {
       // โนวา + ตัวพิเศษใดๆ (รวมจรวด) = ล้างทั้งกระดาน
@@ -307,22 +594,33 @@ export class Game {
     } else if (both && bombs === 2) {
       // ระเบิด + ระเบิด = 5x5
       for (let dr = -2; dr <= 2; dr++) for (let dc = -2; dc <= 2; dc++) add(pivot.col + dc, pivot.row + dr);
+      const [px, py] = point(pivot);
+      bombOrigins.push([px - 12, py], [px + 12, py]);
     } else if (both && comets >= 1 && bombs >= 1) {
       // ดาวหาง + ระเบิด = 3 แถว + 3 คอลัมน์ (กากบาทหนา)
-      for (let d = -1; d <= 1; d++) { addRow(pivot.row + d); addCol(pivot.col + d); }
+      for (let d = -1; d <= 1; d++) {
+        addRow(pivot.row + d); addCol(pivot.col + d);
+        cometOrigins.push([pivot.col * Renderer.CELL + Renderer.CELL / 2, (pivot.row + d) * Renderer.CELL + Renderer.CELL / 2, 'h']);
+        cometOrigins.push([(pivot.col + d) * Renderer.CELL + Renderer.CELL / 2, pivot.row * Renderer.CELL + Renderer.CELL / 2, 'v']);
+      }
+      bombOrigins.push(point(pivot));
     } else if (both && comets === 2) {
       // ดาวหาง + ดาวหาง = ล้างแถว + คอลัมน์ (กากบาทเต็ม)
       addRow(pivot.row); addCol(pivot.col);
+      const [px, py] = point(pivot);
+      cometOrigins.push([px, py, 'h'], [px, py, 'v']);
     } else if (both && rocketCount === 2) {
       // จรวด + จรวด = ยิงจรวดล่าเป้าหมาย 5 ลูกทั่วกระดาน (ตาม AI priority เดิม)
-      this.matchSystem.launchRockets(5, pivot, clear);
+      rocketFlights.push(...this.matchSystem.launchRockets(5, pivot, clear));
       rocketsFired = 5;
     } else if (both && rocketCount >= 1 && comets >= 1) {
       // จรวด + ดาวหาง = จรวดแปลงร่างยิงลำแสง 3 เป้าหมาย (สุ่มแถว/คอลัมน์ต่อเป้า)
       for (let i = 0; i < 3; i++) {
         const t = this.matchSystem.pickRocketTarget(pivot, clear);
         if (!t) continue;
-        if (Math.random() < 0.5) addRow(t.row); else addCol(t.col);
+        rocketFlights.push({ from: pivot, to: t });
+        if (Math.random() < 0.5) { addRow(t.row); cometOrigins.push([...point(t), 'h']); }
+        else { addCol(t.col); cometOrigins.push([...point(t), 'v']); }
         rocketsFired++;
       }
     } else if (both && rocketCount >= 1 && bombs >= 1) {
@@ -330,36 +628,86 @@ export class Game {
       for (let i = 0; i < 3; i++) {
         const t = this.matchSystem.pickRocketTarget(pivot, clear);
         if (!t) continue;
+        rocketFlights.push({ from: pivot, to: t });
         for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) add(t.col + dc, t.row + dr);
+        bombOrigins.push(point(t));
         rocketsFired++;
       }
     } else {
       // ตัวพิเศษเดี่ยว + เม็ดปกติ = จุดชนวนในที่
       const solo = sp1 ? a : b;
       const sp = solo.candy.special;
-      if (sp === 'bomb') { for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) add(solo.col + dc, solo.row + dr); }
-      else if (sp === 'cometH') addRow(solo.row);
-      else if (sp === 'cometV') addCol(solo.col);
+      if (sp === 'bomb') {
+        for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) add(solo.col + dc, solo.row + dr);
+        bombOrigins.push(point(solo));
+      }
+      else if (sp === 'cometH') { addRow(solo.row); cometOrigins.push([...point(solo), 'h']); }
+      else if (sp === 'cometV') { addCol(solo.col); cometOrigins.push([...point(solo), 'v']); }
       else if (sp === 'rocket') {
         const t = this.matchSystem.pickRocketTarget(solo, clear);
-        if (t) { clear.add(t); rocketsFired = 1; }
+        if (t) { clear.add(t); rocketFlights.push({ from: solo, to: t }); rocketsFired = 1; }
       }
     }
     clear.add(a); clear.add(b);
+    // ซ่อนไอเทมพิเศษต้นทางทุกชนิดก่อนปิด special ไม่ให้แฟลชกลับเป็นเจมสีพื้น 1 เฟรม
+    if (sp1 && a.candy) a.candy.scale = 0;
+    if (sp2 && b.candy) b.candy.scale = 0;
     // ปิดสวิตช์ตัวพิเศษที่สลับ กันยิงซ้ำผิดตำแหน่ง (ตัวพิเศษอื่นในกองยังจุดชนวนต่อได้)
     if (a.candy) a.candy.special = null;
     if (b.candy) b.candy.special = null;
 
     const info = this.matchSystem.expandClears(clear);
+    rocketFlights.push(...info.rocketFlights);
+    await this.animateRocketFlights(rocketFlights);
     await this.clearStep(clear, [], {
       chain: 1,
       bombs: bombs + info.bombs,
       novas: (isNova ? 1 : 0) + info.novas,
       comets: comets + info.comets,
       rockets: rocketsFired + info.rockets,
+      novaOrigins: [
+        ...(sp1 === 'nova' ? [[a.col * Renderer.CELL + Renderer.CELL / 2, a.row * Renderer.CELL + Renderer.CELL / 2]] : []),
+        ...(sp2 === 'nova' ? [[b.col * Renderer.CELL + Renderer.CELL / 2, b.row * Renderer.CELL + Renderer.CELL / 2]] : []),
+      ],
+      bombOrigins,
+      cometOrigins,
     });
     await this.dropAndRefill();
     await this.resolveCascade(this.matchSystem.findMatches(), null, 2);
+  }
+
+  /** บินจากช่องจรวดไปยังเป้าหมายก่อนเริ่มจังหวะระเบิด */
+  async animateRocketFlights(flights = []) {
+    if (!flights.length) return;
+    const C = Renderer.CELL;
+    const valid = flights.filter((f) => f.from && f.to);
+    const counts = new Map();
+    const seen = new Map();
+    for (const f of valid) {
+      const key = f.from.col + ',' + f.from.row;
+      counts.set(key, (counts.get(key) || 0) + 1);
+      if (f.from.candy) f.from.candy.scale = 0;
+    }
+    const active = valid.map((f) => {
+      const key = f.from.col + ',' + f.from.row;
+      const index = seen.get(key) || 0;
+      seen.set(key, index + 1);
+      return {
+        x0: f.from.col * C + C / 2,
+        y0: f.from.row * C + C / 2,
+        x1: f.to.col * C + C / 2,
+        y1: f.to.row * C + C / 2,
+        lane: index - (counts.get(key) - 1) / 2,
+        progress: 0,
+      };
+    });
+    this.effects.rockets.push(...active);
+    await Promise.all(active.map((r) => this.animation.tween(r, { progress: 1 }, 680, Easing.linear)));
+    for (const r of active) {
+      const i = this.effects.rockets.indexOf(r);
+      if (i >= 0) this.effects.rockets.splice(i, 1);
+      this.effects.burst(r.x1, r.y1, '#ff8f5c', 12, Math.random, 1.35);
+    }
   }
 
   /**
@@ -372,7 +720,6 @@ export class Game {
     const spawnCells = new Set(spawns.map((s) => s.cell));
     const cells = Array.from(clear);
     const C = Renderer.CELL;
-
     // เอฟเฟกต์เสียง + จอสั่น ตามลำดับความแรง: โนวา > ระเบิด > จรวด > pop ธรรมดา
     this.sfx.pop(ctx.chain);
     if (ctx.bombs) this.sfx.bomb();
@@ -392,12 +739,43 @@ export class Game {
     // พาร์ติเคิลสีลูกกวาดตัวเอง — คอมโบสูง/ตัวพิเศษ = เยอะและแรงขึ้น
     const power = 1 + (ctx.chain - 1) * 0.15;
     let sumX = 0, sumY = 0;
+    const deferredBursts = [];
     for (const cell of cells) {
       const cx = cell.col * C + C / 2, cy = cell.row * C + C / 2;
       sumX += cx; sumY += cy;
       const type = cell.candy.special ? null : cell.candy.type;
       const color = type !== null ? Renderer.PALETTE[type].m : '#ffd84d';
-      this.effects.burst(cx, cy, color, cell.candy.special ? 18 : 6 + ctx.chain * 2, Math.random, cell.candy.special ? power + 0.5 : power);
+      const burst = [cx, cy, color, cell.candy.special ? 18 : 6 + ctx.chain * 2, Math.random, cell.candy.special ? power + 0.5 : power];
+      if (ctx.bombs || ctx.comets || ctx.novas) deferredBursts.push(burst);
+      else this.effects.burst(...burst);
+    }
+
+    const bombOrigins = [...(ctx.bombOrigins || [])];
+    if (ctx.bombs && cells.length) {
+      const bombCells = cells.filter((cell) => cell.candy && cell.candy.special === 'bomb');
+      for (const cell of bombCells) {
+        bombOrigins.push([cell.col * C + C / 2, cell.row * C + C / 2]);
+      }
+      // คอมโบปิด special ก่อนเข้าฟังก์ชันนี้: ใช้ศูนย์กลางกลุ่มเคลียร์เป็นจุดระเบิดแทน
+      for (let i = bombCells.length; i < ctx.bombs; i++) {
+        bombOrigins.push([sumX / cells.length, sumY / cells.length]);
+      }
+    }
+
+    const cometOrigins = [...(ctx.cometOrigins || []), ...cells
+      .filter((cell) => cell.candy && (cell.candy.special === 'cometH' || cell.candy.special === 'cometV'))
+      .map((cell) => [cell.col * C + C / 2, cell.row * C + C / 2, cell.candy.special === 'cometH' ? 'h' : 'v'])];
+    if (ctx.comets && cometOrigins.length < ctx.comets && cells.length) {
+      const cols = cells.map((cell) => cell.col), rows = cells.map((cell) => cell.row);
+      const axis = Math.max(...cols) - Math.min(...cols) >= Math.max(...rows) - Math.min(...rows) ? 'h' : 'v';
+      while (cometOrigins.length < ctx.comets) cometOrigins.push([sumX / cells.length, sumY / cells.length, axis]);
+    }
+    const novaOrigins = [...(ctx.novaOrigins || [])];
+    for (const cell of cells) {
+      if (cell.candy && cell.candy.special === 'nova') novaOrigins.push([cell.col * C + C / 2, cell.row * C + C / 2]);
+    }
+    while (ctx.novas && novaOrigins.length < ctx.novas && cells.length) {
+      novaOrigins.push([sumX / cells.length, sumY / cells.length]);
     }
 
     // ป้าย COMBO กลางกระดานเมื่อ cascade ต่อเนื่อง
@@ -408,6 +786,14 @@ export class Game {
     // อนิเมชันแตกแบบ 2 จังหวะ: พองขึ้นวูบ (anticipation) → หดหายแบบไล่คลื่น (ripple)
     const popping = cells.filter((cell) => !spawnCells.has(cell));
     await Promise.all(popping.map((cell) => this.animation.bump(cell.candy, { scale: 0.18 }, 70)));
+    if (ctx.bombs || ctx.comets || ctx.novas) {
+      // ณ จังหวะ impact ซ่อนเจมก่อน แล้วค่อยปล่อยแฟลช/ลำแสง/เศษประกาย
+      for (const cell of popping) cell.candy.scale = 0;
+      for (const burst of deferredBursts) this.effects.burst(...burst);
+      for (const [x, y] of bombOrigins) this.effects.bombBlast(x, y);
+      for (const [x, y, axis] of cometOrigins) this.effects.cometSweep(x, y, axis);
+      for (const [x, y] of novaOrigins) this.effects.novaWave(x, y);
+    }
     await Promise.all(
       popping.map((cell, i) =>
         this.animation.tween(cell.candy, { scale: 0 }, Game.POP_DURATION, Easing.easeInQuad, Math.min(i * 14, 140))
@@ -426,6 +812,7 @@ export class Game {
 
     // คิดคะแนน: นับทุกช่องที่ถูกเคลียร์ (รวมช่องที่แปลงเป็นตัวพิเศษ) + โบนัสระเบิด/โนวา
     const result = this.scoreSystem.addMatchScore(cells, ctx);
+    this.levelSystem.recordScore(this.scoreSystem.score);
     this.updateHUD(result);
 
     // เลขคะแนนลอยขึ้นตรงจุดศูนย์กลางของกลุ่มที่แตก — ก้อนโตตัวใหญ่
@@ -450,10 +837,14 @@ export class Game {
       if (dist >= 2) dustAt.push({ x: f.col * C + C / 2, y: f.toRow * C + C * 0.82 });
     }
     const spawned = this.gravitySystem.refill();
+    // นับจำนวนเม็ดใหม่ต่อคอลัมน์ เพื่อวางเป็นขบวนเหนือกระดาน ไม่ซ้อนทุกสีไว้จุดเดียว
+    const spawnCounts = new Array(this.board.size).fill(0);
+    for (const s of spawned) spawnCounts[s.col]++;
     for (const s of spawned) {
-      const dist = s.row + 1.5;
+      const dist = spawnCounts[s.col];
       const candy = this.board.getCell(s.col, s.row).candy;
-      candy.offsetY = -dist * C; // spawn จากเหนือกระดาน
+      // ทุกเม็ดในคอลัมน์ขยับระยะเท่ากัน จึงรักษาระยะห่างหนึ่งช่องตลอดการตก
+      candy.offsetY = -dist * C;
       // ไล่คอลัมน์ทีละนิดให้เหมือนเครื่องขุดปล่อยเม็ดเป็นคลื่น (Mining Machine feel)
       tweens.push(this.animation.tween(candy, { offsetY: 0 }, fallTime(dist), Easing.easeOutBack, s.col * 12));
     }

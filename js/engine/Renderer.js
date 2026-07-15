@@ -10,7 +10,7 @@
  *
  * ใช้พิกัด "logical" คงที่ 512x512 (8 ช่อง x 64px) แล้วสเกลตอนวาด
  */
-import { GemArt } from './GemArt.js';
+import { GemArt } from './GemArt.js?v=044';
 
 export class Renderer {
   /** ขนาด logical ของกระดาน (px) */
@@ -54,21 +54,21 @@ export class Renderer {
     const bg = document.createElement('canvas');
     bg.width = L; bg.height = L;
     const g = bg.getContext('2d');
-    g.fillStyle = '#0a0e1e';
+    g.fillStyle = '#080b18';
     g.fillRect(0, 0, L, L);
     // เนบิวลาแบบ dither พิกเซล (จุด 4px โปรยเป็นกลุ่ม แทน gradient เนียนๆ)
     const clusters = [
-      [130, 100, 90, 'rgba(123,92,255,.22)'],
-      [400, 380, 110, 'rgba(77,184,255,.16)'],
-      [420, 90, 70, 'rgba(232,64,79,.14)'],
+      [130, 100, 90, 'rgba(123,92,255,.15)'],
+      [400, 380, 110, 'rgba(77,184,255,.11)'],
+      [420, 90, 70, 'rgba(232,64,79,.09)'],
       // แสงอุ่นซึมขึ้นจากฐานกระดาน — "เตาไฟจักรวาล" ทำให้เจม jewel-tone อุ่นขึ้น (ART_BIBLE: warm amber)
-      [256, 372, 150, 'rgba(255,176,92,.10)'],
+      [256, 372, 150, 'rgba(255,176,92,.07)'],
       // เมฆเนบิวลาเย็นระยะไกลนอกหน้าต่าง — เพิ่มมิติ/ตัดกับโทนอุ่นให้เจมเด่น (นอกยานเท่านั้น)
-      [300, 150, 82, 'rgba(96,214,196,.09)'],
+      [300, 150, 82, 'rgba(96,214,196,.06)'],
     ];
     for (const [cx, cy, cr, color] of clusters) {
       g.fillStyle = color;
-      for (let i = 0; i < 260; i++) {
+      for (let i = 0; i < 170; i++) {
         const a = Math.random() * Math.PI * 2;
         const d = Math.sqrt(Math.random()) * cr;
         const px = Math.floor((cx + Math.cos(a) * d) / 4) * 4;
@@ -81,11 +81,24 @@ export class Renderer {
     this.drawDistantPlanet(g, 452, 66, 34, '#b46cff', '#6c3ab8');
     this.drawDistantPlanet(g, 56, 452, 24, '#4da8ff', '#2a6ab8');
 
+    // ช่องกระจกกักเก็บคริสตัล: ลด noise ของฉากหลังและช่วยให้แต่ละช่องอ่านง่าย
+    // ใช้ม่วงหม่นโปร่งแสง ไม่ตีกริดสว่าง เพื่อไม่ให้แย่งสายตาจากเจม
+    for (let row = 0; row < 8; row++) {
+      for (let col = 0; col < 8; col++) {
+        const x = col * Renderer.CELL + 3;
+        const y = row * Renderer.CELL + 3;
+        g.fillStyle = (row + col) % 2 === 0 ? 'rgba(20,15,39,.30)' : 'rgba(32,22,53,.25)';
+        g.fillRect(x, y, Renderer.CELL - 6, Renderer.CELL - 6);
+        g.strokeStyle = 'rgba(199,179,255,.055)';
+        g.strokeRect(x + .5, y + .5, Renderer.CELL - 7, Renderer.CELL - 7);
+      }
+    }
+
     this.background = bg;
 
     /** ดาวพิกเซล (ตำแหน่งล็อกกับกริด 4px ให้คมแบบ 8-bit) */
     this.stars = [];
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < 44; i++) {
       this.stars.push({
         x: Math.floor(Math.random() * (L / 4)) * 4,
         y: Math.floor(Math.random() * (L / 4)) * 4,
@@ -97,7 +110,7 @@ export class Renderer {
     /** ฝุ่นอวกาศ: จุดเล็กจางๆ จำนวนมาก ลอยเร็วกว่าดาว (เลเยอร์ใกล้กว่า = พารัลแลกซ์)
      *  อัลฟาคงที่ต่อเม็ด → ประกอบสตริงสีครั้งเดียวตรงนี้ ไม่ทำซ้ำทุกเฟรม (TASK-003) */
     this.dust = [];
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < 24; i++) {
       const alpha = 0.08 + Math.random() * 0.14;
       this.dust.push({
         x: Math.random() * L,
@@ -177,11 +190,11 @@ export class Renderer {
     const c = document.createElement('canvas');
     c.width = L; c.height = L;
     const g = c.getContext('2d');
-    g.fillStyle = 'rgba(0,0,0,.16)';
+    g.fillStyle = 'rgba(0,0,0,.10)';
     for (let y = 0; y < L; y += 4) g.fillRect(0, y, L, 2);
     const v = g.createRadialGradient(L / 2, L / 2, L * 0.42, L / 2, L / 2, L * 0.75);
     v.addColorStop(0, 'transparent');
-    v.addColorStop(1, 'rgba(24,8,6,.42)'); // ขอบอุ่นหม่น (เดิมม่วงเย็น) ให้ฟีลห้องโดยสารอบอุ่น
+    v.addColorStop(1, 'rgba(24,8,6,.34)'); // ขอบอุ่นหม่น แต่ไม่บดรายละเอียดเจม
     g.fillStyle = v;
     g.fillRect(0, 0, L, L);
     this.crt = c;
@@ -230,7 +243,7 @@ export class Renderer {
    * @param {number} time เวลาปัจจุบัน (ms)
    * @param {import('./Effects.js').Effects|null} [effects] พาร์ติเคิล/เลขลอย/จอสั่น (v0.2.4)
    */
-  draw(board, selected, time, effects = null) {
+  draw(board, selected, time, effects = null, hintMove = null) {
     const ctx = this.ctx;
     const L = Renderer.LOGICAL;
     const shake = effects ? effects.shakeOffset : Renderer.NO_SHAKE;
@@ -279,8 +292,13 @@ export class Renderer {
     });
 
     if (selected) this.drawSelection(selected, time);
+    if (hintMove) this.drawHintSparkles(hintMove, time);
 
     if (effects) {
+      this.drawRocketFlights(effects);
+      this.drawBombBlasts(effects);
+      this.drawCometSweeps(effects);
+      this.drawNovaWaves(effects);
       this.drawParticles(effects);
       this.drawFloaters(effects);
     }
@@ -416,6 +434,180 @@ export class Renderer {
     ctx.globalAlpha = 1;
   }
 
+  /** Bomb: แกนแฟลชอุ่น + วงแรงกระแทกพิกเซลสองชั้น ขยายครอบคลุมพื้นที่ 3x3 */
+  drawBombBlasts(effects) {
+    const ctx = this.ctx;
+    for (const b of effects.bombBlasts) {
+      const t = 1 - b.life / b.maxLife;
+      const fade = (1 - t) * (1 - t);
+      if (t < 0.24) {
+        const flash = Math.max(4, Math.round(42 * (1 - t / 0.24)));
+        ctx.globalAlpha = 0.72 * (1 - t / 0.24);
+        ctx.fillStyle = '#fff0b8';
+        ctx.fillRect(Math.round(b.x - flash / 2), Math.round(b.y - flash / 2), flash, flash);
+      }
+      const rings = [[10 + t * 92, '#ff9f43', 16], [4 + t * 68, '#ffe0a3', 12]];
+      for (const [radius, color, steps] of rings) {
+        ctx.globalAlpha = fade;
+        ctx.fillStyle = color;
+        for (let i = 0; i < steps; i++) {
+          const a = i / steps * Math.PI * 2;
+          const x = Math.round((b.x + Math.cos(a) * radius) / 3) * 3;
+          const y = Math.round((b.y + Math.sin(a) * radius) / 3) * 3;
+          ctx.fillRect(x - 2, y - 2, 4, 4);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /** Comet: หัวดาวหางคู่พุ่งกวาดออกจากจุดระเบิด พร้อมหางสีเดียวกับสไปรต์ */
+  drawCometSweeps(effects) {
+    const ctx = this.ctx;
+    for (const c of effects.cometSweeps) {
+      const t = 1 - c.life / c.maxLife;
+      const launch = Math.max(0, Math.min(1, (t - 0.12) / 0.6));
+      const reach = 1 - Math.pow(1 - launch, 2);
+      const fade = Math.max(0, 1 - t);
+      const distance = 300 * reach;
+      ctx.globalCompositeOperation = 'lighter';
+      // จังหวะแรก: หัวดาวก้อนเดียวแฟลชและแยกร่าง ก่อนสองดวงออกวิ่งคนละทิศ
+      if (t < 0.2) {
+        const splitFlash = 1 - t / 0.2;
+        const core = 10 + Math.round((1 - splitFlash) * 10);
+        ctx.globalAlpha = 0.78 * splitFlash;
+        ctx.fillStyle = '#ffd866';
+        ctx.fillRect(Math.round(c.x - core), Math.round(c.y - 3), core * 2 + 1, 7);
+        ctx.fillRect(Math.round(c.x - 3), Math.round(c.y - core), 7, core * 2 + 1);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(Math.round(c.x - 5), Math.round(c.y - 2), 11, 5);
+        ctx.fillRect(Math.round(c.x - 2), Math.round(c.y - 5), 5, 11);
+      }
+      for (const dir of [-1, 1]) {
+        const hx = c.x + (c.axis === 'h' ? dir * distance : 0);
+        const hy = c.y + (c.axis === 'v' ? dir * distance : 0);
+        const tail = Math.min(76, distance * 0.7);
+        const tx = c.axis === 'h' ? -dir : 0, ty = c.axis === 'v' ? -dir : 0;
+        ctx.globalAlpha = 0.34 * fade;
+        ctx.fillStyle = '#7c3cff';
+        ctx.beginPath(); ctx.moveTo(hx + ty * 9, hy - tx * 9); ctx.lineTo(hx + tx * tail, hy + ty * tail); ctx.lineTo(hx - ty * 9, hy + tx * 9); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha = 0.68 * fade;
+        ctx.fillStyle = '#58d9ff';
+        ctx.beginPath(); ctx.moveTo(hx + ty * 5, hy - tx * 5); ctx.lineTo(hx + tx * tail * 0.78, hy + ty * tail * 0.78); ctx.lineTo(hx - ty * 5, hy + tx * 5); ctx.closePath(); ctx.fill();
+        // หัวดาวหมุนเป็นจังหวะ 45° แบบพิกเซลระหว่างพุ่ง (สองดวงหมุนสวนกัน)
+        const spin = Math.floor(t * 16) * Math.PI / 4 * dir;
+        ctx.save();
+        ctx.translate(Math.round(hx), Math.round(hy));
+        ctx.rotate(spin);
+        ctx.globalAlpha = fade;
+        ctx.fillStyle = '#ffd866';
+        ctx.fillRect(-10, -3, 21, 7);
+        ctx.fillRect(-3, -10, 7, 21);
+        ctx.fillStyle = '#fff7d6';
+        ctx.fillRect(-5, -2, 11, 5);
+        ctx.fillRect(-2, -5, 5, 11);
+        ctx.restore();
+        ctx.fillStyle = '#d6b3ff';
+        for (let i = 1; i <= 3; i++) {
+          const spark = tail * (i / 4);
+          const side = i % 2 === 0 ? 7 : -7;
+          ctx.fillRect(Math.round(hx + tx * spark + ty * side - 2), Math.round(hy + ty * spark - tx * side - 2), 4, 4);
+        }
+      }
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /** Nova: จุดแสงพิกเซลถูกดูดเข้าแกน ก่อนปล่อยคลื่นม่วง–ฟ้าครอบทั้งกระดาน */
+  drawNovaWaves(effects) {
+    const ctx = this.ctx;
+    for (const n of effects.novaWaves) {
+      const t = 1 - n.life / n.maxLife;
+      ctx.globalCompositeOperation = 'lighter';
+      if (t < 0.3) {
+        const u = t / 0.3;
+        const radius = 104 * (1 - u) + 10;
+        ctx.fillStyle = '#a98cff';
+        ctx.globalAlpha = 0.65;
+        for (let i = 0; i < 16; i++) {
+          const a = i / 16 * Math.PI * 2 + t * 4;
+          const x = Math.round((n.x + Math.cos(a) * radius) / 3) * 3;
+          const y = Math.round((n.y + Math.sin(a) * radius) / 3) * 3;
+          ctx.fillRect(x - 2, y - 2, 4, 4);
+        }
+      }
+      if (t > 0.2) {
+        const u = Math.min(1, (t - 0.2) / 0.65);
+        const radius = 12 + u * 350;
+        const fade = 1 - u;
+        ctx.globalAlpha = 0.48 * fade;
+        ctx.strokeStyle = '#8c6cff';
+        ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.arc(n.x, n.y, radius, 0, Math.PI * 2); ctx.stroke();
+        ctx.globalAlpha = 0.72 * fade;
+        ctx.strokeStyle = '#72dce3';
+        ctx.lineWidth = 3;
+        ctx.beginPath(); ctx.arc(n.x, n.y, radius - 7, 0, Math.PI * 2); ctx.stroke();
+      }
+      const core = Math.max(4, Math.round(24 * (1 - Math.min(1, t / 0.55))));
+      ctx.globalAlpha = 0.65 * (1 - t);
+      ctx.fillStyle = '#e9e2ff';
+      ctx.fillRect(Math.round(n.x - core / 2), Math.round(n.y - core / 2), core, core);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  /** วาดสไปรต์จรวดให้หันตามเส้นทาง พร้อมเปลวไฟพิกเซลสั้น ๆ */
+  drawRocketFlights(effects) {
+    const ctx = this.ctx;
+    for (const r of effects.rockets) {
+      const t = Math.max(0, Math.min(1, r.progress));
+      const launchEnd = 0.16;
+      const loopEnd = 0.57;
+      const launchX = r.x0 + r.lane * 9;
+      const launchY = r.y0 - 20;
+      let x, y, dx, dy;
+      if (t < launchEnd) {
+        // ยกตัวออกจากช่องให้เห็นการปล่อยจรวดชัดก่อนเริ่มวน
+        const u = t / launchEnd;
+        x = r.x0 + (launchX - r.x0) * u;
+        y = r.y0 + (launchY - r.y0) * u;
+        dx = launchX - r.x0;
+        dy = -1;
+      } else if (t < loopEnd) {
+        // วนหนึ่งวงจากจุดที่ยกตัวขึ้น แล้วกลับมาจุดเดิมก่อนพุ่งเข้าเป้า
+        const u = (t - launchEnd) / (loopEnd - launchEnd);
+        const a = u * Math.PI * 2;
+        const radius = 20;
+        x = launchX + Math.sin(a) * radius;
+        y = launchY - (1 - Math.cos(a)) * radius;
+        dx = Math.cos(a);
+        dy = -Math.sin(a);
+      } else {
+        // จังหวะสุดท้ายพุ่งจากจุดยกตัวเข้าเป้าเป็นโค้งตื้น ๆ
+        const u = (t - loopEnd) / (1 - loopEnd);
+        x = launchX + (r.x1 - launchX) * u;
+        y = launchY + (r.y1 - launchY) * u - Math.sin(Math.PI * u) * 14;
+        dx = r.x1 - launchX;
+        dy = r.y1 - launchY - Math.PI * 14 * Math.cos(Math.PI * u);
+      }
+      const angle = Math.atan2(dy, dx) + Math.PI / 2;
+      ctx.save();
+      ctx.translate(Math.round(x), Math.round(y));
+      ctx.rotate(angle);
+      ctx.globalAlpha = Math.min(1, t * 5, (1 - t) * 8);
+      ctx.drawImage(this.gemArt.special.rocket.glow, -20, -20, 40, 40);
+      ctx.fillStyle = '#ff9f2f';
+      ctx.fillRect(-3, 15, 6, 8 + Math.round((1 - t) * 5));
+      ctx.fillStyle = '#fff0a8';
+      ctx.fillRect(-1, 15, 2, 6);
+      ctx.restore();
+    }
+    ctx.globalAlpha = 1;
+  }
+
   /** วาดเลขคะแนนลอยขึ้น ด้วยฟอนต์พิกเซลตัดขอบดำ — รองรับตัวใหญ่ (big) สำหรับ COMBO/คะแนนก้อนโต */
   drawFloaters(effects) {
     const ctx = this.ctx;
@@ -454,4 +646,31 @@ export class Renderer {
     ctx.fillRect(x + 2, y + C - 2 - t, len, t); ctx.fillRect(x + 2, y + C - 2 - len, t, len);
     ctx.fillRect(x + C - 2 - len, y + C - 2 - t, len, t); ctx.fillRect(x + C - 2 - t, y + C - 2 - len, t, len);
   }
+
+  /** ประกายดาวพิกเซลรอบเจม Hint — เห็นง่ายกว่าการโยก แต่ไม่ครอบด้วยกรอบ */
+  drawHintSparkles(move, time) {
+    const ctx = this.ctx;
+    const C = Renderer.CELL;
+    const points = [[13, 12], [C - 12, 17], [18, C - 11]];
+    for (let cellIndex = 0; cellIndex < 2; cellIndex++) {
+      const cell = cellIndex === 0 ? move.from : move.to;
+      const x0 = cell.col * C, y0 = cell.row * C;
+      for (let i = 0; i < points.length; i++) {
+        const phase = time / 260 + i * 2.1 + cellIndex * 1.3;
+        const glow = Math.max(0, Math.sin(phase));
+        if (glow < 0.18) continue;
+        const [px, py] = points[i];
+        const size = glow > 0.72 ? 4 : 3;
+        const x = Math.round(x0 + px), y = Math.round(y0 + py);
+        ctx.globalAlpha = 0.28 + glow * 0.62;
+        ctx.fillStyle = i === 1 ? '#fff4c2' : '#ffd866';
+        ctx.fillRect(x - size, y - 1, size * 2 + 1, 3);
+        ctx.fillRect(x - 1, y - size, 3, size * 2 + 1);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(x, y, 1, 1);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+
 }
