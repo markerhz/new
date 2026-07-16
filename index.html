@@ -8,12 +8,34 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=045">
+<link rel="stylesheet" href="css/style.css?v=048">
 </head>
 <body>
 <div id="app">
-  <section id="planet-screen" class="progress-screen show" aria-label="แผนที่จักรวาล">
+  <section id="title-screen" class="progress-screen title-screen show" aria-label="หน้าเริ่มเกม GemVerse">
+    <div class="title-drift title-drift-one">✦</div>
+    <div class="title-drift title-drift-two">· ✧ ·</div>
+    <div class="screen-panel title-panel">
+      <p class="eyebrow">WELCOME ABOARD</p>
+      <div class="title-emblem" aria-hidden="true">
+        <span class="title-planet"></span>
+        <span class="title-ring"></span>
+        <span class="title-spark">✦</span>
+      </div>
+      <h1 class="title-logo">GEMVERSE</h1>
+      <p class="title-tagline">A TINY COZY UNIVERSE</p>
+      <p class="title-copy">ออกเดินทาง ค้นพบคริสตัล และสร้างจักรวาลเล็ก ๆ ของคุณ</p>
+      <div class="title-actions">
+        <button id="title-play" class="primary-btn title-play">PLAY</button>
+        <button id="title-continue" class="secondary-btn" hidden>CONTINUE</button>
+        <button id="title-settings" class="secondary-btn" aria-label="Settings" aria-expanded="false">⚙ SETTINGS</button>
+      </div>
+      <p class="title-version">CAPTAIN BUILD • v0.5</p>
+    </div>
+  </section>
+  <section id="planet-screen" class="progress-screen" aria-label="แผนที่จักรวาล">
     <div class="screen-panel planet-panel">
+      <button id="back-to-title" class="back-btn">← TITLE</button>
       <p class="eyebrow">FIRST DESTINATION</p>
       <button id="open-planet" class="planet-orbit" aria-label="เข้าสู่ดาว Luma">
         <span class="planet-sphere"></span>
@@ -120,6 +142,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="js/main.js?v=047"></script>
+<script type="module" src="js/main.js?v=048"></script>
 </body>
 </html>

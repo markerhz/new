@@ -1,5 +1,11 @@
 # Changelog
 
+## 🪐 Sprint 3 / TASK-043: Title + Start Flow — 2026-07-16
+
+- เพิ่มหน้า Title แบบ Cozy Purple Galaxy พร้อมโลโก้ดาววงแหวน แสงนุ่ม และ ambient pixel motion
+- เพิ่ม PLAY ไปหน้า Space Map, CONTINUE ไปหน้าเลือกด่านเมื่อมี Save และ SETTINGS ที่ใช้ระบบเดียวกับในเกม
+- เพิ่มปุ่มย้อนกลับจาก Space Map ไปหน้า Title และเชื่อมเส้นทาง Title → Planet → Level → Mission → Match-3 ครบวงจร
+
 ## 🚀 Sprint 3 / TASK-042: Three-Star Moves Bonus — 2026-07-16
 
 - เมื่อคะแนนแตะเกณฑ์ 3 ดาว ระบบจบด่านหลัง cascade ปัจจุบันและแปลง Moves ที่เหลือเป็นคะแนนโบนัส Move ละ 50

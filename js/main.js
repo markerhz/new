@@ -2,7 +2,7 @@
  * SweetVerse Cosmic v0.2.4 Alpha — จุดเริ่มต้นของเกม
  * สร้าง Game แล้วเริ่มลูปหลัก
  */
-import { Game } from './engine/Game.js?v=047';
+import { Game } from './engine/Game.js?v=048';
 
 const canvas = document.getElementById('game');
 const game = new Game(canvas);

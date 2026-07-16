@@ -101,10 +101,10 @@ export class Game {
     this.tutorialIconEl = document.getElementById('tutorial-icon');
     this.tutorialTitleEl = document.getElementById('tutorial-title');
     this.tutorialBodyEl = document.getElementById('tutorial-body');
-    this.settingsBtn = document.getElementById('settings');
+    this.settingsBtns = [document.getElementById('settings'), document.getElementById('title-settings')].filter(Boolean);
     this.settingsEl = document.getElementById('settings-overlay');
     this.soundToggleBtn = document.getElementById('sound-toggle');
-    this.settingsBtn?.addEventListener('click', () => this.toggleSettings(true));
+    this.settingsBtns.forEach((button) => button.addEventListener('click', () => this.toggleSettings(true)));
     document.getElementById('close-settings')?.addEventListener('click', () => this.toggleSettings(false));
     this.settingsEl?.addEventListener('click', (event) => {
       if (event.target === this.settingsEl) this.toggleSettings(false);
@@ -122,10 +122,15 @@ export class Game {
     const openPlanet = () => this.showLevelSelect();
     document.getElementById('open-planet')?.addEventListener('click', openPlanet);
     document.getElementById('enter-planet')?.addEventListener('click', openPlanet);
+    document.getElementById('title-play')?.addEventListener('click', () => this.showPlanetMap());
+    document.getElementById('title-continue')?.addEventListener('click', () => this.showLevelSelect());
+    document.getElementById('back-to-title')?.addEventListener('click', () => this.showTitle());
     document.getElementById('back-to-space')?.addEventListener('click', () => this.showPlanetMap());
     document.getElementById('back-to-levels')?.addEventListener('click', () => this.showLevelSelect());
     document.getElementById('start-level')?.addEventListener('click', () => this.beginSelectedLevel());
     document.getElementById('tutorial-ok')?.addEventListener('click', () => this.dismissTutorial());
+    const continueBtn = document.getElementById('title-continue');
+    if (continueBtn) continueBtn.hidden = !(this.progress.unlocked > 1 || Object.keys(this.progress.levels).length > 0);
     this.renderLevelMap();
     this.updateHUD(null);
     this.updateLevelHUD();
@@ -134,7 +139,7 @@ export class Game {
   toggleSettings(open) {
     this.settingsEl?.classList.toggle('show', open);
     this.settingsEl?.setAttribute('aria-hidden', String(!open));
-    this.settingsBtn?.setAttribute('aria-expanded', String(open));
+    this.settingsBtns.forEach((button) => button.setAttribute('aria-expanded', String(open)));
   }
 
   /**
@@ -201,8 +206,18 @@ export class Game {
     if (planetEl) planetEl.textContent = totalStars;
   }
 
+  showTitle() {
+    this.gameplayActive = false;
+    document.getElementById('title-screen')?.classList.add('show');
+    document.getElementById('planet-screen')?.classList.remove('show');
+    document.getElementById('level-screen')?.classList.remove('show');
+    document.getElementById('mission-screen')?.classList.remove('show');
+    this.resultEl?.classList.remove('show', 'win', 'lose');
+  }
+
   showPlanetMap() {
     this.gameplayActive = false;
+    document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('planet-screen')?.classList.add('show');
     document.getElementById('level-screen')?.classList.remove('show');
     document.getElementById('mission-screen')?.classList.remove('show');
@@ -211,6 +226,7 @@ export class Game {
   showLevelSelect() {
     this.gameplayActive = false;
     this.renderLevelMap();
+    document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('planet-screen')?.classList.remove('show');
     document.getElementById('level-screen')?.classList.add('show');
     document.getElementById('mission-screen')?.classList.remove('show');
@@ -221,6 +237,7 @@ export class Game {
     const level = FIRST_PLANET.levels.find((item) => item.id === levelId);
     if (!level || levelId > this.progress.unlocked) return;
     this.currentLevel = level;
+    document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('level-screen')?.classList.remove('show');
     document.getElementById('planet-screen')?.classList.remove('show');
     document.getElementById('mission-screen')?.classList.add('show');
