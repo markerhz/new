@@ -4,27 +4,37 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#170B2C">
-<title>GemVerse — A Tiny Cozy Universe</title>
+<title>GemVerse Adventure</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=048">
+<link rel="stylesheet" href="css/style.css?v=049">
 </head>
 <body>
 <div id="app">
   <section id="title-screen" class="progress-screen title-screen show" aria-label="หน้าเริ่มเกม GemVerse">
+    <div class="title-nebula" aria-hidden="true"></div>
+    <div class="title-comet" aria-hidden="true"></div>
+    <div class="title-mini-ship" aria-hidden="true"><span></span></div>
     <div class="title-drift title-drift-one">✦</div>
     <div class="title-drift title-drift-two">· ✧ ·</div>
     <div class="screen-panel title-panel">
-      <p class="eyebrow">WELCOME ABOARD</p>
+      <span class="title-lantern title-lantern-left" aria-hidden="true"></span>
+      <span class="title-lantern title-lantern-right" aria-hidden="true"></span>
+      <p class="eyebrow">WELCOME, EXPLORER</p>
+      <div class="title-logo-wrap">
+        <span class="title-logo-gem" aria-hidden="true">◆</span>
+        <h1 class="title-logo">GEMVERSE</h1>
+        <p class="title-adventure"><span>✦</span> ADVENTURE <span>✦</span></p>
+      </div>
       <div class="title-emblem" aria-hidden="true">
         <span class="title-planet"></span>
         <span class="title-ring"></span>
         <span class="title-spark">✦</span>
+        <span class="title-moon"></span>
       </div>
-      <h1 class="title-logo">GEMVERSE</h1>
-      <p class="title-tagline">A TINY COZY UNIVERSE</p>
-      <p class="title-copy">ออกเดินทาง ค้นพบคริสตัล และสร้างจักรวาลเล็ก ๆ ของคุณ</p>
+      <div class="title-crystals title-crystals-left" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="title-crystals title-crystals-right" aria-hidden="true"><i></i><i></i><i></i></div>
       <div class="title-actions">
         <button id="title-play" class="primary-btn title-play">PLAY</button>
         <button id="title-continue" class="secondary-btn" hidden>CONTINUE</button>
@@ -79,7 +89,7 @@
   </section>
   <header>
     <h1>🪐 GEMVERSE</h1>
-    <p class="tagline">A Tiny Cozy Universe</p>
+    <p class="tagline">GemVerse Adventure</p>
   </header>
   <div id="hud">
     <div class="hud-group">

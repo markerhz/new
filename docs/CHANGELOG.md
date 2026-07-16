@@ -1,5 +1,12 @@
 # Changelog
 
+## 🌸 Sprint 3 / TASK-044: Pastel Adventure Title — 2026-07-16
+
+- เปลี่ยนแบรนด์หน้าแรกเป็น `GEMVERSE ADVENTURE` และนำข้อความ `A Tiny Cozy Universe` ออกจาก UI
+- ยกจานสีหน้า Title เป็นลาเวนเดอร์ ชมพู ฟ้า และครีมพาสเทล พร้อมลดความหม่นแต่คงขอบพิกเซลชัด
+- เพิ่มดาววงแหวนแบบ pixel-cluster, เนบิวลาพารัลแลกซ์, ดาวหาง, ยานเล็ก, ดวงจันทร์, โคมไฟ และคริสตัลเคลื่อนไหว
+- หน้าแรกไม่มีปุ่ม BACK; ปุ่มย้อนกลับยังคงอยู่ใน Space Map และหน้าด้านใน
+
 ## 🪐 Sprint 3 / TASK-043: Title + Start Flow — 2026-07-16
 
 - เพิ่มหน้า Title แบบ Cozy Purple Galaxy พร้อมโลโก้ดาววงแหวน แสงนุ่ม และ ambient pixel motion

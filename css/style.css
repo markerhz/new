@@ -47,22 +47,36 @@ body{
 .screen-panel h2{font-family:'Press Start 2P',monospace;color:var(--gold);font-size:1.15em;margin:10px 0}
 .screen-panel p{color:#cdbde1;margin:8px 0}
 .eyebrow{font-family:'Press Start 2P',monospace!important;font-size:.58em;letter-spacing:.12em;color:var(--purple-6)!important}
-.title-screen{overflow:hidden;background:radial-gradient(circle at 50% 38%,rgba(124,92,255,.22),transparent 25%),radial-gradient(circle at 18% 75%,rgba(95,225,255,.08),transparent 22%),linear-gradient(180deg,#090419,#170b2c 58%,#080310)}
-.title-panel{width:min(500px,94vw);padding:30px 24px 24px;border-color:#7653b7;background:linear-gradient(180deg,rgba(42,25,81,.94),rgba(13,7,31,.98));box-shadow:inset 0 0 0 2px #120927,0 8px 0 #07030d,0 0 44px rgba(124,92,255,.26)}
-.title-emblem{position:relative;width:174px;height:128px;margin:7px auto 0;image-rendering:pixelated}
-.title-planet{position:absolute;width:96px;height:96px;left:39px;top:15px;border-radius:50%;background:radial-gradient(circle at 32% 27%,#fff3c3 0 5%,#d8c9ff 7%,#9b7cff 25%,#5c3fae 56%,#26184c 82%);box-shadow:inset -10px -9px 0 rgba(12,5,29,.28),0 0 22px rgba(155,124,255,.52);animation:title-float 3.4s steps(8,end) infinite}
-.title-ring{position:absolute;width:156px;height:43px;left:9px;top:43px;border:7px solid var(--gold);border-left-color:#8a66ff;border-radius:50%;transform:rotate(-12deg);box-shadow:0 0 9px rgba(255,216,102,.32);animation:title-ring 4.2s steps(10,end) infinite}
-.title-spark{position:absolute;right:4px;top:10px;color:#fff3b5;font-size:1.35em;text-shadow:0 0 8px var(--gold);animation:title-twinkle 1.8s steps(3,end) infinite}
-.title-logo{margin:0;font-family:'Press Start 2P',monospace;font-size:clamp(1.55em,6vw,2.2em);letter-spacing:.04em;background:linear-gradient(#fff5d0 0 25%,#c7b3ff 45%,#7c5cff 68%,#ff9c42 100%);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:3px 3px 0 rgba(27,8,39,.58);filter:drop-shadow(0 0 8px rgba(155,124,255,.28))}
-.title-tagline{font-family:'Press Start 2P',monospace!important;font-size:.59em!important;letter-spacing:.12em;color:var(--gold)!important;margin:10px 0 18px!important}
-.title-copy{max-width:350px;margin:0 auto 18px!important;font-weight:600;line-height:1.5;font-size:.86em}
-.title-actions{display:grid;gap:9px;width:min(255px,100%);margin:0 auto}.title-actions button{width:100%}.title-play{font-size:.82em;padding:14px 24px}.title-actions .secondary-btn{font-size:.61em}
-.title-version{font-family:'Press Start 2P',monospace!important;font-size:.43em!important;letter-spacing:.08em;color:#806e96!important;margin:18px 0 0!important}
-.title-drift{position:absolute;z-index:1;color:#d9ccff;text-shadow:0 0 6px #9b7cff;pointer-events:none;opacity:.62}.title-drift-one{left:15%;top:22%;animation:title-drift 7s steps(12,end) infinite}.title-drift-two{right:12%;bottom:24%;animation:title-drift 9s steps(14,end) infinite reverse}
-@keyframes title-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes title-ring{0%,100%{transform:rotate(-12deg) scaleX(1)}50%{transform:rotate(-9deg) scaleX(.96)}}
-@keyframes title-twinkle{0%,100%{opacity:.35;transform:scale(.75)}50%{opacity:1;transform:scale(1.15)}}
-@keyframes title-drift{0%{transform:translate(0,8px);opacity:.25}50%{opacity:.8}100%{transform:translate(25px,-20px);opacity:.25}}
+.title-screen{overflow:hidden;background:radial-gradient(circle at 18% 24%,rgba(255,155,211,.2),transparent 22%),radial-gradient(circle at 78% 25%,rgba(117,219,255,.2),transparent 24%),linear-gradient(180deg,#17103b,#2b1a5a 56%,#160d34)}
+.title-nebula{position:absolute;inset:-18%;opacity:.72;background:radial-gradient(ellipse at 35% 40%,rgba(207,169,255,.32),transparent 22%),radial-gradient(ellipse at 68% 38%,rgba(255,164,210,.25),transparent 20%),radial-gradient(ellipse at 55% 70%,rgba(104,215,255,.19),transparent 25%);animation:title-nebula 16s steps(24,end) infinite alternate;pointer-events:none}
+.title-panel{width:min(720px,95vw);min-height:min(650px,94vh);padding:25px 30px 20px;border:4px solid #ad89de;border-radius:6px;background:linear-gradient(180deg,rgba(82,57,133,.72),rgba(35,22,70,.92));box-shadow:inset 0 0 0 3px #2e1951,0 0 0 7px #563a78,0 8px 0 #0d0720,0 0 48px rgba(225,184,255,.34);overflow:hidden}
+.title-panel::before{content:"";position:absolute;inset:9px;border:2px solid rgba(255,222,184,.2);clip-path:polygon(0 0,42% 0,42% 3px,58% 3px,58% 0,100% 0,100% 100%,0 100%);pointer-events:none}
+.title-logo-wrap{position:relative;z-index:4;margin:5px auto -4px}.title-logo-gem{position:absolute;left:50%;top:-19px;transform:translateX(-50%) rotate(45deg);color:#dca8ff;font-size:1.15em;text-shadow:3px 3px 0 #4a246e,0 0 8px #f4d7ff;animation:title-gem-twinkle 2.2s steps(4,end) infinite}
+.title-logo{margin:0;font-family:'Press Start 2P',monospace;font-size:clamp(1.7em,6vw,3em);letter-spacing:.025em;color:#f6efff;-webkit-text-stroke:2px #9b7bd0;text-shadow:-3px 0 #3a205c,3px 0 #3a205c,0 -3px #fff9ff,0 5px #5d3c88,5px 7px 0 #25123d;filter:drop-shadow(0 0 8px rgba(239,215,255,.5))}.title-logo::first-letter{color:#ffd2ed;-webkit-text-stroke-color:#9f6dbc}
+.title-adventure{display:inline-block!important;margin:9px 0 0!important;padding:7px 14px 6px;border:3px solid #8b4f61;background:linear-gradient(#ffe18f,#f4ad65);box-shadow:inset 0 2px #fff4c9,3px 3px 0 #3b1c3f;color:#4a2352!important;font-family:'Press Start 2P',monospace!important;font-size:.62em!important;letter-spacing:.12em}.title-adventure span{color:#9a5ec6}
+.title-emblem{position:relative;width:330px;height:230px;margin:-3px auto -22px;z-index:2;image-rendering:pixelated}
+.title-planet{position:absolute;width:176px;height:176px;left:77px;top:25px;clip-path:polygon(29% 0,71% 0,71% 3%,82% 3%,82% 8%,91% 8%,91% 17%,97% 17%,97% 29%,100% 29%,100% 71%,97% 71%,97% 82%,91% 82%,91% 91%,82% 91%,82% 97%,71% 97%,71% 100%,29% 100%,29% 97%,18% 97%,18% 91%,9% 91%,9% 82%,3% 82%,3% 71%,0 71%,0 29%,3% 29%,3% 18%,9% 18%,9% 9%,18% 9%,18% 3%,29% 3%);background:radial-gradient(circle at 32% 27%,#fff4cf 0 4%,#ffd5ed 6%,#c7b3ff 27%,#9275dc 54%,#50358d 78%,#30205f 100%);box-shadow:inset -15px -12px 0 rgba(35,17,74,.3),0 0 25px rgba(245,183,235,.55);animation:title-float 4.2s steps(10,end) infinite}
+.title-planet::after{content:"";position:absolute;left:24px;top:55px;width:112px;height:16px;background:rgba(255,211,235,.2);box-shadow:18px 26px rgba(138,104,207,.28),-5px 52px rgba(255,206,232,.17);transform:skewX(-22deg)}
+.title-ring{position:absolute;width:278px;height:72px;left:26px;top:80px;border:9px solid #ffc7e5;border-left-color:#9edfff;border-bottom-color:#a98fe8;border-radius:50%;transform:rotate(-12deg);box-shadow:0 0 9px rgba(255,210,237,.38);animation:title-ring 4.6s steps(12,end) infinite}
+.title-spark{position:absolute;right:26px;top:22px;color:#fff6c8;font-size:1.35em;text-shadow:0 0 8px #ffd983;animation:title-twinkle 1.8s steps(3,end) infinite}.title-moon{position:absolute;left:22px;top:64px;width:25px;height:25px;background:#a8ddff;box-shadow:inset -6px -5px #6d83cb,0 0 7px #9edfff;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);animation:title-moon 7s steps(14,end) infinite}
+.title-actions{position:relative;z-index:5;display:grid;gap:9px;width:min(285px,100%);margin:0 auto}.title-actions button{width:100%;clip-path:polygon(8px 0,calc(100% - 8px) 0,calc(100% - 8px) 3px,100% 3px,100% calc(100% - 7px),calc(100% - 7px) calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,7px calc(100% - 3px),0 calc(100% - 3px),0 7px,3px 7px,3px 3px,8px 3px)}.title-play{font-size:.86em;padding:14px 24px;background:linear-gradient(#ffe5a0,#f1aa68);border-color:#a56168;color:#4b2547}.title-actions .secondary-btn{font-size:.61em;background:linear-gradient(#9c86e8,#6f58b2);border-color:#cabaff;color:#fff9ff}
+.title-version{font-family:'Press Start 2P',monospace!important;font-size:.42em!important;letter-spacing:.08em;color:#b9a5cf!important;margin:15px 0 0!important}
+.title-drift{position:absolute;z-index:1;color:#ffe4f4;text-shadow:0 0 6px #c7a6ff;pointer-events:none;opacity:.7}.title-drift-one{left:11%;top:18%;animation:title-drift 7s steps(12,end) infinite}.title-drift-two{right:10%;bottom:20%;animation:title-drift 9s steps(14,end) infinite reverse}
+.title-comet{position:absolute;z-index:2;width:70px;height:5px;top:19%;left:-100px;background:linear-gradient(90deg,transparent,#a8e5ff,#fff4d4);box-shadow:0 0 8px #a4dfff;transform:rotate(-15deg);animation:title-comet 9s steps(30,end) infinite}.title-comet::after{content:"✦";position:absolute;right:-8px;top:-10px;color:#fff5c8;text-shadow:0 0 7px #fff}
+.title-mini-ship{position:absolute;z-index:3;width:34px;height:18px;left:-60px;top:61%;background:#d6c8f5;clip-path:polygon(0 38%,56% 38%,74% 0,100% 20%,88% 75%,55% 100%,55% 72%,0 72%);box-shadow:5px 5px 0 rgba(35,17,68,.45);animation:title-ship 13s steps(40,end) 2s infinite}.title-mini-ship span{position:absolute;left:-15px;top:7px;width:17px;height:5px;background:#9ae4ff;box-shadow:-6px 0 #ffc1e2}
+.title-lantern{position:absolute;z-index:4;top:42%;width:16px;height:32px;border:4px solid #553254;background:#ffe5a0;box-shadow:0 0 14px rgba(255,218,151,.72);animation:title-lantern 2.4s steps(4,end) infinite}.title-lantern-left{left:24px}.title-lantern-right{right:24px;animation-delay:.7s}
+.title-crystals{position:absolute;z-index:4;bottom:28px;display:flex;align-items:flex-end;gap:2px}.title-crystals-left{left:24px}.title-crystals-right{right:24px}.title-crystals i{display:block;width:13px;height:31px;background:linear-gradient(90deg,#8965c9,#e6b8ff 48%,#8edfff 52%);clip-path:polygon(50% 0,100% 25%,84% 100%,16% 100%,0 25%);box-shadow:0 0 6px rgba(210,176,255,.6);animation:title-crystal 2.8s steps(5,end) infinite}.title-crystals i:nth-child(2){height:43px;animation-delay:.5s}.title-crystals i:nth-child(3){height:25px;animation-delay:1s}
+@keyframes title-nebula{0%{transform:translate(-2%,-1%) scale(1)}100%{transform:translate(3%,2%) scale(1.06)}}
+@keyframes title-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes title-ring{0%,100%{transform:rotate(-12deg) scaleX(1)}50%{transform:rotate(-9deg) scaleX(.97)}}
+@keyframes title-twinkle{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes title-gem-twinkle{0%,100%{opacity:.55;transform:translateX(-50%) rotate(45deg) scale(.82)}50%{opacity:1;transform:translateX(-50%) rotate(45deg) scale(1.08)}}
+@keyframes title-drift{0%{transform:translate(0,8px);opacity:.25}50%{opacity:.9}100%{transform:translate(28px,-22px);opacity:.25}}
+@keyframes title-moon{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-8px)}}
+@keyframes title-comet{0%,12%{left:-100px;opacity:0}18%{opacity:1}42%,100%{left:110%;opacity:0}}
+@keyframes title-ship{0%,8%{left:-60px;transform:translateY(0)}48%{transform:translateY(-12px)}78%,100%{left:110%;transform:translateY(5px)}}
+@keyframes title-lantern{0%,100%{filter:brightness(.9)}50%{filter:brightness(1.18)}}
+@keyframes title-crystal{0%,100%{filter:brightness(.85)}50%{filter:brightness(1.25)}}
 .planet-orbit{position:relative;width:190px;height:150px;margin:12px auto 4px;border:0;background:transparent;cursor:pointer;display:block}
 .planet-sphere{position:absolute;width:116px;height:116px;left:37px;top:16px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff2bd 0 5%,#c7b3ff 7%,#7c5cff 32%,#3d2a6b 68%,#170b2c 100%);box-shadow:inset -12px -10px 0 rgba(14,6,33,.24),0 0 26px rgba(155,124,255,.55);image-rendering:pixelated}
 .planet-sphere::after{content:"";position:absolute;inset:25px 14px 35px;border-radius:50%;border-top:8px solid rgba(95,225,255,.25);transform:rotate(-14deg)}
@@ -254,6 +268,7 @@ canvas#game{
 @media (max-height:700px){
   header{margin:6px 0 2px}
   header h1{font-size:.95em}
+  .title-panel{min-height:94vh;padding-top:18px}.title-emblem{width:260px;height:180px;transform:scale(.78);margin:-15px auto -42px}.title-adventure{margin-top:7px!important}
 }
 
 @media (max-width:430px){
@@ -267,6 +282,7 @@ canvas#game{
   .star-progress{width:min(330px,84vw)}
   .hud-btn{padding:0 12px}
   .level-grid{gap:7px}.level-node{min-height:63px}.screen-panel{padding-left:13px;padding-right:13px}
+  .title-panel{width:94vw;padding-left:12px;padding-right:12px}.title-logo{font-size:clamp(1.45em,8vw,2em);-webkit-text-stroke:0}.title-emblem{transform:scale(.84);margin-left:calc(50% - 165px);margin-top:-10px;margin-bottom:-34px}.title-lantern{display:none}.title-crystals-left{left:8px}.title-crystals-right{right:8px}
 }
 
-@media (prefers-reduced-motion:reduce){.title-planet,.title-ring,.title-spark,.title-drift{animation:none}}
+@media (prefers-reduced-motion:reduce){.title-nebula,.title-planet,.title-ring,.title-spark,.title-moon,.title-drift,.title-comet,.title-mini-ship,.title-lantern,.title-crystals i{animation:none}}
