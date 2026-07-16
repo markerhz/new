@@ -45,12 +45,14 @@ console.log('--- Board: กระดานตั้งต้น ---');
   const level = new LevelSystem({ id: 1, moves: 2, target: 100, stars: [100, 200, 300] });
   ok(level.useMove() && level.moves === 1, 'LevelSystem ใช้ Move สำเร็จ');
   level.recordScore(100);
-  ok(level.complete && !level.canMove, 'คะแนนถึงเป้าหมายแล้วด่าน complete');
+  ok(level.goalMet && !level.complete && level.canMove, 'ถึง Target แล้วยังเล่นต่อเพื่อเก็บดาวได้');
+  level.useMove();
+  ok(level.complete && !level.canMove, 'Target ครบและ Moves หมดแล้วด่าน complete');
 }
 {
   const level = new LevelSystem({ id: 1, moves: 1, target: 100, stars: [100, 200, 300] });
   level.useMove();
-  ok(level.moves === 0 && !level.complete && !level.canMove, 'Moves หมดก่อนเป้าหมายครบแล้วหยุดรับตาเดิน');
+  ok(level.finished && !level.complete && !level.canMove, 'Moves หมดก่อนเป้าหมายครบแล้วหยุดรับตาเดิน');
 }
 {
   ok(FIRST_PLANET.levels.length === 10, 'ดาวแรกมี 10 ด่าน');

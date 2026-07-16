@@ -8,8 +8,11 @@ export class LevelSystem {
     this.score = 0;
   }
 
-  get canMove() { return this.moves > 0 && !this.complete; }
-  get complete() { return this.score >= this.level.target; }
+  /** ถึง Target แล้ว แต่ยังเล่นต่อได้เพื่อไล่เก็บดาวจนครบ Moves */
+  get goalMet() { return this.score >= this.level.target; }
+  get finished() { return this.moves <= 0; }
+  get canMove() { return !this.finished; }
+  get complete() { return this.finished && this.goalMet; }
 
   useMove() {
     if (!this.canMove) return false;

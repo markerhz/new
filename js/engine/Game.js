@@ -258,8 +258,8 @@ export class Game {
   }
 
   showLevelResult() {
-    const won = this.levelSystem.complete;
-    if (!won && this.levelSystem.moves > 0) return;
+    if (!this.levelSystem.finished) return;
+    const won = this.levelSystem.goalMet;
     if (!this.resultEl) return;
     this.gameplayActive = false;
     this.resetMoveHint();
