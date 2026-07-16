@@ -47,53 +47,90 @@ body{
 .screen-panel h2{font-family:'Press Start 2P',monospace;color:var(--gold);font-size:1.15em;margin:10px 0}
 .screen-panel p{color:#cdbde1;margin:8px 0}
 .eyebrow{font-family:'Press Start 2P',monospace!important;font-size:.58em;letter-spacing:.12em;color:var(--purple-6)!important}
-.title-screen{overflow:hidden;background:radial-gradient(circle at 18% 24%,rgba(255,155,211,.2),transparent 22%),radial-gradient(circle at 78% 25%,rgba(117,219,255,.2),transparent 24%),linear-gradient(180deg,#17103b,#2b1a5a 56%,#160d34)}
-.title-nebula{position:absolute;inset:-18%;opacity:.72;background:radial-gradient(ellipse at 35% 40%,rgba(207,169,255,.32),transparent 22%),radial-gradient(ellipse at 68% 38%,rgba(255,164,210,.25),transparent 20%),radial-gradient(ellipse at 55% 70%,rgba(104,215,255,.19),transparent 25%);animation:title-nebula 16s steps(24,end) infinite alternate;pointer-events:none}
-.title-panel{width:min(720px,95vw);min-height:min(650px,94vh);padding:25px 30px 20px;border:4px solid #ad89de;border-radius:6px;background:linear-gradient(180deg,rgba(82,57,133,.72),rgba(35,22,70,.92));box-shadow:inset 0 0 0 3px #2e1951,0 0 0 7px #563a78,0 8px 0 #0d0720,0 0 48px rgba(225,184,255,.34);overflow:hidden}
-.title-panel::before{content:"";position:absolute;inset:9px;border:2px solid rgba(255,222,184,.2);clip-path:polygon(0 0,42% 0,42% 3px,58% 3px,58% 0,100% 0,100% 100%,0 100%);pointer-events:none}
-.title-logo-wrap{position:relative;z-index:4;margin:5px auto -4px}.title-logo-gem{position:absolute;left:50%;top:-19px;transform:translateX(-50%) rotate(45deg);color:#dca8ff;font-size:1.15em;text-shadow:3px 3px 0 #4a246e,0 0 8px #f4d7ff;animation:title-gem-twinkle 2.2s steps(4,end) infinite}
-.title-logo{margin:0;font-family:'Press Start 2P',monospace;font-size:clamp(1.7em,6vw,3em);letter-spacing:.025em;color:#f6efff;-webkit-text-stroke:2px #9b7bd0;text-shadow:-3px 0 #3a205c,3px 0 #3a205c,0 -3px #fff9ff,0 5px #5d3c88,5px 7px 0 #25123d;filter:drop-shadow(0 0 8px rgba(239,215,255,.5))}.title-logo::first-letter{color:#ffd2ed;-webkit-text-stroke-color:#9f6dbc}
-.title-adventure{display:inline-block!important;margin:9px 0 0!important;padding:7px 14px 6px;border:3px solid #8b4f61;background:linear-gradient(#ffe18f,#f4ad65);box-shadow:inset 0 2px #fff4c9,3px 3px 0 #3b1c3f;color:#4a2352!important;font-family:'Press Start 2P',monospace!important;font-size:.62em!important;letter-spacing:.12em}.title-adventure span{color:#9a5ec6}
-.title-emblem{position:relative;width:330px;height:230px;margin:-3px auto -22px;z-index:2;image-rendering:pixelated}
-.title-planet{position:absolute;width:176px;height:176px;left:77px;top:25px;clip-path:polygon(29% 0,71% 0,71% 3%,82% 3%,82% 8%,91% 8%,91% 17%,97% 17%,97% 29%,100% 29%,100% 71%,97% 71%,97% 82%,91% 82%,91% 91%,82% 91%,82% 97%,71% 97%,71% 100%,29% 100%,29% 97%,18% 97%,18% 91%,9% 91%,9% 82%,3% 82%,3% 71%,0 71%,0 29%,3% 29%,3% 18%,9% 18%,9% 9%,18% 9%,18% 3%,29% 3%);background:radial-gradient(circle at 32% 27%,#fff4cf 0 4%,#ffd5ed 6%,#c7b3ff 27%,#9275dc 54%,#50358d 78%,#30205f 100%);box-shadow:inset -15px -12px 0 rgba(35,17,74,.3),0 0 25px rgba(245,183,235,.55);animation:title-float 4.2s steps(10,end) infinite}
-.title-planet::after{content:"";position:absolute;left:24px;top:55px;width:112px;height:16px;background:rgba(255,211,235,.2);box-shadow:18px 26px rgba(138,104,207,.28),-5px 52px rgba(255,206,232,.17);transform:skewX(-22deg)}
-.title-ring{position:absolute;width:278px;height:72px;left:26px;top:80px;border:9px solid #ffc7e5;border-left-color:#9edfff;border-bottom-color:#a98fe8;border-radius:50%;transform:rotate(-12deg);box-shadow:0 0 9px rgba(255,210,237,.38);animation:title-ring 4.6s steps(12,end) infinite}
-.title-spark{position:absolute;right:26px;top:22px;color:#fff6c8;font-size:1.35em;text-shadow:0 0 8px #ffd983;animation:title-twinkle 1.8s steps(3,end) infinite}.title-moon{position:absolute;left:22px;top:64px;width:25px;height:25px;background:#a8ddff;box-shadow:inset -6px -5px #6d83cb,0 0 7px #9edfff;clip-path:polygon(30% 0,70% 0,100% 30%,100% 70%,70% 100%,30% 100%,0 70%,0 30%);animation:title-moon 7s steps(14,end) infinite}
-.title-actions{position:relative;z-index:5;display:grid;gap:9px;width:min(285px,100%);margin:0 auto}.title-actions button{width:100%;clip-path:polygon(8px 0,calc(100% - 8px) 0,calc(100% - 8px) 3px,100% 3px,100% calc(100% - 7px),calc(100% - 7px) calc(100% - 7px),calc(100% - 7px) 100%,7px 100%,7px calc(100% - 3px),0 calc(100% - 3px),0 7px,3px 7px,3px 3px,8px 3px)}.title-play{font-size:.86em;padding:14px 24px;background:linear-gradient(#ffe5a0,#f1aa68);border-color:#a56168;color:#4b2547}.title-actions .secondary-btn{font-size:.61em;background:linear-gradient(#9c86e8,#6f58b2);border-color:#cabaff;color:#fff9ff}
-.title-version{font-family:'Press Start 2P',monospace!important;font-size:.42em!important;letter-spacing:.08em;color:#b9a5cf!important;margin:15px 0 0!important}
-.title-drift{position:absolute;z-index:1;color:#ffe4f4;text-shadow:0 0 6px #c7a6ff;pointer-events:none;opacity:.7}.title-drift-one{left:11%;top:18%;animation:title-drift 7s steps(12,end) infinite}.title-drift-two{right:10%;bottom:20%;animation:title-drift 9s steps(14,end) infinite reverse}
-.title-comet{position:absolute;z-index:2;width:70px;height:5px;top:19%;left:-100px;background:linear-gradient(90deg,transparent,#a8e5ff,#fff4d4);box-shadow:0 0 8px #a4dfff;transform:rotate(-15deg);animation:title-comet 9s steps(30,end) infinite}.title-comet::after{content:"✦";position:absolute;right:-8px;top:-10px;color:#fff5c8;text-shadow:0 0 7px #fff}
-.title-mini-ship{position:absolute;z-index:3;width:34px;height:18px;left:-60px;top:61%;background:#d6c8f5;clip-path:polygon(0 38%,56% 38%,74% 0,100% 20%,88% 75%,55% 100%,55% 72%,0 72%);box-shadow:5px 5px 0 rgba(35,17,68,.45);animation:title-ship 13s steps(40,end) 2s infinite}.title-mini-ship span{position:absolute;left:-15px;top:7px;width:17px;height:5px;background:#9ae4ff;box-shadow:-6px 0 #ffc1e2}
-.title-lantern{position:absolute;z-index:4;top:42%;width:16px;height:32px;border:4px solid #553254;background:#ffe5a0;box-shadow:0 0 14px rgba(255,218,151,.72);animation:title-lantern 2.4s steps(4,end) infinite}.title-lantern-left{left:24px}.title-lantern-right{right:24px;animation-delay:.7s}
-.title-crystals{position:absolute;z-index:4;bottom:28px;display:flex;align-items:flex-end;gap:2px}.title-crystals-left{left:24px}.title-crystals-right{right:24px}.title-crystals i{display:block;width:13px;height:31px;background:linear-gradient(90deg,#8965c9,#e6b8ff 48%,#8edfff 52%);clip-path:polygon(50% 0,100% 25%,84% 100%,16% 100%,0 25%);box-shadow:0 0 6px rgba(210,176,255,.6);animation:title-crystal 2.8s steps(5,end) infinite}.title-crystals i:nth-child(2){height:43px;animation-delay:.5s}.title-crystals i:nth-child(3){height:25px;animation-delay:1s}
-@keyframes title-nebula{0%{transform:translate(-2%,-1%) scale(1)}100%{transform:translate(3%,2%) scale(1.06)}}
-@keyframes title-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-@keyframes title-ring{0%,100%{transform:rotate(-12deg) scaleX(1)}50%{transform:rotate(-9deg) scaleX(.97)}}
-@keyframes title-twinkle{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.12)}}
-@keyframes title-gem-twinkle{0%,100%{opacity:.55;transform:translateX(-50%) rotate(45deg) scale(.82)}50%{opacity:1;transform:translateX(-50%) rotate(45deg) scale(1.08)}}
-@keyframes title-drift{0%{transform:translate(0,8px);opacity:.25}50%{opacity:.9}100%{transform:translate(28px,-22px);opacity:.25}}
-@keyframes title-moon{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-8px)}}
-@keyframes title-comet{0%,12%{left:-100px;opacity:0}18%{opacity:1}42%,100%{left:110%;opacity:0}}
-@keyframes title-ship{0%,8%{left:-60px;transform:translateY(0)}48%{transform:translateY(-12px)}78%,100%{left:110%;transform:translateY(5px)}}
-@keyframes title-lantern{0%,100%{filter:brightness(.9)}50%{filter:brightness(1.18)}}
-@keyframes title-crystal{0%,100%{filter:brightness(.85)}50%{filter:brightness(1.25)}}
-.planet-orbit{position:relative;width:190px;height:150px;margin:12px auto 4px;border:0;background:transparent;cursor:pointer;display:block}
-.planet-sphere{position:absolute;width:116px;height:116px;left:37px;top:16px;border-radius:50%;background:radial-gradient(circle at 34% 28%,#fff2bd 0 5%,#c7b3ff 7%,#7c5cff 32%,#3d2a6b 68%,#170b2c 100%);box-shadow:inset -12px -10px 0 rgba(14,6,33,.24),0 0 26px rgba(155,124,255,.55);image-rendering:pixelated}
-.planet-sphere::after{content:"";position:absolute;inset:25px 14px 35px;border-radius:50%;border-top:8px solid rgba(95,225,255,.25);transform:rotate(-14deg)}
-.planet-ring{position:absolute;width:178px;height:48px;left:6px;top:52px;border:7px solid #ffcf66;border-left-color:#8a66ff;border-radius:50%;transform:rotate(-12deg);box-shadow:0 0 10px rgba(255,216,102,.35)}
-.planet-progress{font-family:'Press Start 2P',monospace;font-size:.72em;color:var(--gold);margin:14px}
+.title-screen{overflow:hidden;padding:0;background:#160d34}
+.title-screen::before{display:none}
+.title-art-stage{position:relative;width:min(560px,100vw);height:100%;overflow:hidden;isolation:isolate;contain:layout paint;background:#25164b;box-shadow:0 0 52px rgba(183,137,224,.25)}
+.title-art-bg{position:absolute;z-index:0;inset:0;background:url('../assets/gemverse_assets/01_backgrounds/title_observatory_playable_pixel.png') center/cover no-repeat;image-rendering:pixelated}
+.title-stars{position:absolute;z-index:1;inset:-4%;width:108%;height:108%;object-fit:cover;image-rendering:pixelated;pointer-events:none;clip-path:ellipse(48% 45% at 50% 31%);will-change:transform,opacity}
+.title-stars-far{opacity:.34;animation:title-star-drift-far 56s linear infinite alternate}
+.title-stars-near{opacity:.58;animation:title-star-drift-near 36s linear infinite alternate,title-star-twinkle 4.2s steps(3,end) infinite}
+.title-explorer{position:absolute;z-index:2;top:24%;right:1%;width:clamp(92px,23%,128px);height:auto;image-rendering:pixelated;pointer-events:none;transform-origin:54% 48%;animation:title-explorer-float 8s ease-in-out infinite;will-change:transform}
+.title-ui{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;pointer-events:none}
+.title-logo-image{position:absolute;top:clamp(16px,3vh,32px);width:min(520px,92%);height:auto;image-rendering:pixelated;filter:drop-shadow(0 8px 1px rgba(30,12,50,.42));animation:title-logo-float 5.6s ease-in-out infinite;will-change:transform}
+.title-actions{position:absolute;left:50%;bottom:clamp(42px,6vh,64px);transform:translateX(-50%);display:grid;gap:clamp(0px,.4vh,5px);width:min(380px,86%);pointer-events:auto;animation:title-menu-arrive .55s ease-out both}
+.title-asset-btn{width:100%;height:clamp(64px,8.5vh,82px);padding:0 34px 5px;border:0;background-color:transparent;background-position:center;background-repeat:no-repeat;background-size:100% 100%;font-family:'Press Start 2P',monospace;font-size:clamp(.68em,1.3vw,.88em);letter-spacing:.04em;cursor:pointer;image-rendering:pixelated;filter:drop-shadow(0 5px 1px rgba(32,13,47,.38));transition:filter .08s linear;touch-action:manipulation}
+.title-asset-btn span{position:relative;z-index:1;pointer-events:none}
+.title-asset-primary{background-image:url('../assets/gemverse_assets/05_ui/title/button_primary_normal.png');color:#4c2348;text-shadow:0 2px #ffe9ba}
+.title-asset-primary:hover,.title-asset-primary:focus-visible{background-image:url('../assets/gemverse_assets/05_ui/title/button_primary_hover.png');filter:drop-shadow(0 0 10px rgba(255,225,132,.72))}
+.title-asset-primary:active{background-image:url('../assets/gemverse_assets/05_ui/title/button_primary_pressed.png');padding-top:5px;filter:drop-shadow(0 2px 1px rgba(32,13,47,.35))}
+.title-asset-secondary{background-image:url('../assets/gemverse_assets/05_ui/title/button_secondary_normal.png');color:#fff8ff;text-shadow:0 3px #4c2d79}
+.title-asset-secondary:hover,.title-asset-secondary:focus-visible{background-image:url('../assets/gemverse_assets/05_ui/title/button_secondary_hover.png');filter:drop-shadow(0 0 9px rgba(219,183,255,.65))}
+.title-asset-secondary:active{background-image:url('../assets/gemverse_assets/05_ui/title/button_secondary_pressed.png');padding-top:5px;filter:drop-shadow(0 2px 1px rgba(32,13,47,.35))}
+.title-asset-btn:focus-visible{outline:3px solid #fff2bb;outline-offset:2px}
+.title-asset-btn[hidden]{display:none}
+.title-version{position:absolute;bottom:clamp(12px,2vh,25px);font-family:'Press Start 2P',monospace!important;font-size:.42em!important;letter-spacing:.08em;color:#f2dcff!important;text-shadow:0 2px #493066,0 0 5px #775895;margin:0!important;pointer-events:none}
+@keyframes title-star-drift-far{0%{transform:translate3d(-1.2%,-.7%,0)}100%{transform:translate3d(1.2%,.8%,0)}}
+@keyframes title-star-drift-near{0%{transform:translate3d(1.5%,.6%,0) scale(1.01)}100%{transform:translate3d(-1.5%,-.9%,0) scale(1.035)}}
+@keyframes title-star-twinkle{0%,100%{opacity:.36}50%{opacity:.64}}
+@keyframes title-logo-float{0%,100%{transform:translate3d(0,0,0)}50%{transform:translate3d(0,-6px,0)}}
+@keyframes title-explorer-float{0%,100%{transform:translate3d(0,3px,0) rotate(-1.5deg)}50%{transform:translate3d(-4px,-6px,0) rotate(1.5deg)}}
+@keyframes title-menu-arrive{0%{opacity:0;transform:translate(-50%,14px)}100%{opacity:1;transform:translate(-50%,0)}}
+
+/* แผนที่ดาวและด่าน: ภาพ PNG เป็นงานศิลป์หลัก โค้ดดูแลเฉพาะตำแหน่ง/สถานะ/ข้อความสด */
+.map-screen{overflow:hidden;padding:0;background:#100725}
+.map-screen::before{display:none}
+.map-art-stage{position:relative;width:min(560px,100vw);height:100dvh;max-height:100%;overflow:hidden;isolation:isolate;contain:layout paint;background:#170b2c;box-shadow:0 0 52px rgba(183,137,224,.22)}
+.map-background,.level-map-background{position:absolute;z-index:0;inset:0;width:100%;height:100%;object-fit:cover;image-rendering:pixelated;pointer-events:none;user-select:none}
+.level-map-background{object-fit:fill}
+.map-topbar{position:absolute;z-index:4;top:max(8px,env(safe-area-inset-top));left:8px;width:calc(100% - 16px);height:clamp(72px,10vh,88px);display:grid;align-items:center;gap:6px;margin:0;padding:9px 10px 12px;background:url('../assets/gemverse_assets/05_ui/panel_dark.png') center/100% 100% no-repeat;image-rendering:pixelated;filter:drop-shadow(0 5px 1px rgba(12,5,28,.55))}
+.planet-map-topbar{grid-template-columns:clamp(82px,22vw,104px) minmax(0,1fr) clamp(82px,22vw,104px)}
+.level-map-topbar{grid-template-columns:clamp(82px,22vw,104px) minmax(0,1fr) clamp(62px,17vw,80px)}
+.map-back-btn{width:100%;min-width:0;min-height:48px;padding:0 8px 2px;border:0;background:url('../assets/gemverse_assets/05_ui/button_back_normal.png') center/100% 100% no-repeat;color:#f8edff;font-family:'Press Start 2P',monospace;font-size:clamp(.4em,1.6vw,.56em);text-shadow:0 2px #48266d;cursor:pointer;image-rendering:pixelated}
+.map-back-btn:hover,.map-back-btn:focus-visible{background-image:url('../assets/gemverse_assets/05_ui/button_back_hover.png');outline:0;filter:drop-shadow(0 0 8px rgba(199,179,255,.58))}
+.map-back-btn:active{background-image:url('../assets/gemverse_assets/05_ui/button_back_pressed.png');padding-top:3px}
+.map-heading{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;text-shadow:0 2px #25113e}
+.map-heading span{font-family:'Press Start 2P',monospace;font-size:clamp(.56em,2.1vw,.78em);color:var(--gold);white-space:nowrap}
+.map-heading strong{max-width:100%;margin-top:7px;overflow:hidden;color:#eadfff;font-size:clamp(.72em,2.7vw,.98em);text-overflow:ellipsis;white-space:nowrap}
+.planet-map-topbar .map-heading{grid-column:2}
+.level-map-stars{display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gold);font-family:'Press Start 2P',monospace;text-shadow:0 2px #311740}
+.level-map-stars strong{font-size:clamp(.72em,2.8vw,.94em)}
+.level-map-stars small{margin-top:6px;font-size:clamp(.38em,1.5vw,.52em);white-space:nowrap}
+
+.planet-node-layer,.level-node-layer{position:absolute;z-index:2;inset:0}
+.planet-node{position:absolute;width:clamp(260px,82%,410px);height:clamp(150px,23vh,190px);display:flex;align-items:center;justify-content:flex-start;padding:14px 18px 14px 8px;border:0;background:url('../assets/gemverse_assets/05_ui/panel_popup.png') center/100% 100% no-repeat;color:#fff;cursor:pointer;image-rendering:pixelated;filter:drop-shadow(0 7px 2px rgba(8,3,20,.52));transition:filter .1s linear}
+.planet-node-luma{top:clamp(94px,16vh,145px);left:4%}
+.planet-node-mira{right:4%;bottom:clamp(66px,10vh,92px);flex-direction:row-reverse;padding-right:8px;padding-left:18px}
+.planet-node:hover,.planet-node:focus-visible{outline:0;filter:drop-shadow(0 0 12px rgba(255,216,102,.55)) drop-shadow(0 7px 2px rgba(8,3,20,.52))}
+.planet-node:active:not(:disabled){transform:translateY(3px);filter:drop-shadow(0 3px 1px rgba(8,3,20,.52))}
+.planet-node:disabled,.planet-node.locked{cursor:not-allowed;filter:grayscale(.66) brightness(.66) drop-shadow(0 6px 2px rgba(8,3,20,.45))}
+.planet-node-icon{flex:0 0 auto;width:clamp(96px,30vw,152px);height:clamp(96px,30vw,152px);object-fit:contain;image-rendering:pixelated;pointer-events:none;animation:planet-icon-float 6s ease-in-out infinite}
+.planet-node-mira .planet-node-icon{animation-delay:-2.2s}
+.planet-node-copy{min-width:0;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.planet-node-copy strong{font-family:'Press Start 2P',monospace;font-size:clamp(.72em,3.2vw,1em);color:var(--gold);text-shadow:0 2px #4d2455}
+.planet-node-copy small{margin-top:8px;color:#eadfff;font-weight:700;font-size:clamp(.72em,2.8vw,.94em);white-space:nowrap}
+.planet-node-progress{margin-top:10px;color:#fff2b6;font-family:'Press Start 2P',monospace;font-size:clamp(.46em,2vw,.66em);white-space:nowrap}
+.planet-lock-note{margin-top:7px;color:#d6c7df;font-size:clamp(.58em,2.2vw,.72em);line-height:1.15}
+@keyframes planet-icon-float{0%,100%{transform:translate3d(0,2px,0)}50%{transform:translate3d(0,-5px,0)}}
+
+.level-node{--node-x:50%;--node-y:50%;position:absolute;left:var(--node-x);top:var(--node-y);width:clamp(50px,14vw,64px);height:clamp(50px,14vw,64px);min-width:48px;min-height:48px;padding:6px 2px 5px;border:0;background:url('../assets/gemverse_assets/05_ui/panel_dark.png') center/100% 100% no-repeat;color:#fff;cursor:pointer;image-rendering:pixelated;filter:drop-shadow(0 4px 1px rgba(9,4,18,.62));transform:translate(-50%,-50%)}
+.level-node:hover,.level-node:focus-visible{outline:0;filter:drop-shadow(0 0 9px rgba(199,179,255,.72)) drop-shadow(0 4px 1px rgba(9,4,18,.62))}
+.level-node .number{display:block;margin:2px 0 5px;font-family:'Press Start 2P',monospace;font-size:clamp(.52em,2.2vw,.7em);line-height:1}
+.level-node .stars{display:block;color:var(--gold);font-size:clamp(.5em,2.1vw,.68em);line-height:1;letter-spacing:-1px;white-space:nowrap}
+.level-node.completed{background-image:url('../assets/gemverse_assets/05_ui/panel_light.png');color:#fff8ff;text-shadow:0 2px #351d45}
+.level-node.current{background-image:url('../assets/gemverse_assets/05_ui/panel_gold.png');color:#fff5cf;text-shadow:0 2px #3a1c40;animation:map-node-ready 1.8s steps(4,end) infinite}
+.level-node.locked{background-image:url('../assets/gemverse_assets/05_ui/panel_dark.png');cursor:not-allowed;filter:grayscale(.8) brightness(.54);opacity:.78}
+@keyframes map-node-ready{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.07)}}
+
+/* ตำแหน่งสำรองทำให้ทั้ง 10 ด่านไม่ซ้อนกัน แม้ก่อน JS ใส่พิกัดเฉพาะดาว */
+.level-node:nth-child(1){--node-x:60%;--node-y:86%}.level-node:nth-child(2){--node-x:42%;--node-y:77%}.level-node:nth-child(3){--node-x:27%;--node-y:68%}.level-node:nth-child(4){--node-x:65%;--node-y:68%}.level-node:nth-child(5){--node-x:63%;--node-y:55%}
+.level-node:nth-child(6){--node-x:38%;--node-y:48%}.level-node:nth-child(7){--node-x:63%;--node-y:41%}.level-node:nth-child(8){--node-x:39%;--node-y:34%}.level-node:nth-child(9){--node-x:58%;--node-y:27%}.level-node:nth-child(10){--node-x:52%;--node-y:18.5%}
+.level-map-stage[data-planet="mira"] .level-node:nth-child(1){--node-x:31%;--node-y:87%}.level-map-stage[data-planet="mira"] .level-node:nth-child(2){--node-x:52%;--node-y:78%}.level-map-stage[data-planet="mira"] .level-node:nth-child(3){--node-x:33%;--node-y:68%}.level-map-stage[data-planet="mira"] .level-node:nth-child(4){--node-x:55%;--node-y:59%}.level-map-stage[data-planet="mira"] .level-node:nth-child(5){--node-x:69%;--node-y:50%}
+.level-map-stage[data-planet="mira"] .level-node:nth-child(6){--node-x:48%;--node-y:44%}.level-map-stage[data-planet="mira"] .level-node:nth-child(7){--node-x:66%;--node-y:37%}.level-map-stage[data-planet="mira"] .level-node:nth-child(8){--node-x:45%;--node-y:31%}.level-map-stage[data-planet="mira"] .level-node:nth-child(9){--node-x:29%;--node-y:25%}.level-map-stage[data-planet="mira"] .level-node:nth-child(10){--node-x:51%;--node-y:18.5%}
+.map-footer-note{position:absolute;z-index:4;left:5%;bottom:max(8px,env(safe-area-inset-bottom));width:90%;min-height:42px;display:flex;align-items:center;justify-content:center;margin:0!important;padding:8px 16px 10px;background:url('../assets/gemverse_assets/05_ui/panel_dark.png') center/100% 100% no-repeat;color:#e5d8ef!important;font-size:clamp(.66em,2.8vw,.82em)!important;font-weight:700;line-height:1.15;image-rendering:pixelated;text-shadow:0 2px #20102f;pointer-events:none}
+
 .primary-btn,.secondary-btn,.back-btn{font-family:'Press Start 2P',monospace;cursor:pointer}
 .primary-btn{padding:12px 22px;border:3px solid #8d472f;border-radius:8px;background:linear-gradient(#ffcf66,#e77b32);color:#28101a;box-shadow:inset 0 2px #fff0af,0 4px #5a241e}
-.level-panel{padding-top:44px}
 .back-btn{position:absolute;left:16px;top:14px;border:0;background:transparent;color:#bca9dc;font-size:.55em}
-.level-summary{font-family:'Press Start 2P',monospace;font-size:.7em;color:var(--gold)!important}
-.level-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:20px 0 15px}
-.level-node{position:relative;min-height:69px;padding:8px 3px;border:3px solid #7653b7;border-radius:10px;background:linear-gradient(#49337a,#251742);color:#fff;box-shadow:inset 0 2px rgba(255,255,255,.1),0 4px #100822;cursor:pointer}
-.level-node .number{display:block;font-family:'Press Start 2P',monospace;font-size:.72em;margin:5px 0 8px}
-.level-node .stars{display:block;color:var(--gold);font-size:.73em;letter-spacing:-1px}
-.level-node.locked{filter:grayscale(.7);opacity:.46;cursor:not-allowed}
-.level-node.current{border-color:var(--gold);box-shadow:0 0 14px rgba(255,216,102,.28),0 4px #100822}
-.map-note{font-size:.78em!important}
 .mission-panel{padding-top:44px}
 .brief-lesson{min-height:24px;font-weight:700;color:#e8dcf3!important}
 .brief-rules{display:flex;justify-content:center;gap:12px;margin:18px 0}
@@ -268,7 +305,8 @@ canvas#game{
 @media (max-height:700px){
   header{margin:6px 0 2px}
   header h1{font-size:.95em}
-  .title-panel{min-height:94vh;padding-top:18px}.title-emblem{width:260px;height:180px;transform:scale(.78);margin:-15px auto -42px}.title-adventure{margin-top:7px!important}
+  .title-logo-image{top:7px;width:min(430px,80%)}.title-explorer{top:24%;width:90px}.title-actions{bottom:30px;width:min(330px,82%)}.title-asset-btn{height:58px}.title-version{bottom:7px}
+  .map-topbar{height:72px}.planet-node{height:150px}.planet-node-luma{top:94px}.planet-node-mira{bottom:66px}.planet-node-icon{width:96px;height:96px}.level-node{width:48px;height:48px;min-width:48px;min-height:48px}.level-node.current{animation:none}.map-footer-note{min-height:40px}
 }
 
 @media (max-width:430px){
@@ -281,8 +319,9 @@ canvas#game{
   #objectives{font-size:.64em;gap:5px}
   .star-progress{width:min(330px,84vw)}
   .hud-btn{padding:0 12px}
-  .level-grid{gap:7px}.level-node{min-height:63px}.screen-panel{padding-left:13px;padding-right:13px}
-  .title-panel{width:94vw;padding-left:12px;padding-right:12px}.title-logo{font-size:clamp(1.45em,8vw,2em);-webkit-text-stroke:0}.title-emblem{transform:scale(.84);margin-left:calc(50% - 165px);margin-top:-10px;margin-bottom:-34px}.title-lantern{display:none}.title-crystals-left{left:8px}.title-crystals-right{right:8px}
+  .screen-panel{padding-left:13px;padding-right:13px}
+  .map-topbar{left:6px;width:calc(100% - 12px);padding-left:7px;padding-right:7px}.map-footer-note{left:4%;width:92%;padding-left:10px;padding-right:10px}
+  .title-logo-image{top:clamp(10px,3vh,26px);width:92%}.title-explorer{top:24%;right:1.5%;width:clamp(90px,24vw,108px)}.title-actions{bottom:44px;width:90%}.title-asset-btn{height:66px;font-size:.7em}.title-version{bottom:15px;font-size:.36em!important}
 }
 
-@media (prefers-reduced-motion:reduce){.title-nebula,.title-planet,.title-ring,.title-spark,.title-moon,.title-drift,.title-comet,.title-mini-ship,.title-lantern,.title-crystals i{animation:none}}
+@media (prefers-reduced-motion:reduce){.title-art-bg,.title-stars,.title-explorer,.title-logo-image,.title-actions,.planet-node-icon,.level-node.current{animation:none}}

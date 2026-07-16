@@ -8,63 +8,84 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css?v=049">
+<link rel="preload" as="image" href="assets/gemverse_assets/01_backgrounds/title_observatory_playable_pixel.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/title/logo_gemverse_adventure.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/title/button_primary_normal.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/title/button_secondary_normal.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/title/title_stars_far.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/title/title_stars_near.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/09_characters/explorer_navigator_title_float_v1.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/01_backgrounds/bg_nebula.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/01_backgrounds/maps/planet_luma_level_map.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/01_backgrounds/maps/planet_mira_level_map.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/maps/planet_luma_icon.png">
+<link rel="preload" as="image" href="assets/gemverse_assets/05_ui/maps/planet_mira_icon.png">
+<link rel="stylesheet" href="css/style.css?v=067">
 </head>
 <body>
 <div id="app">
   <section id="title-screen" class="progress-screen title-screen show" aria-label="หน้าเริ่มเกม GemVerse">
-    <div class="title-nebula" aria-hidden="true"></div>
-    <div class="title-comet" aria-hidden="true"></div>
-    <div class="title-mini-ship" aria-hidden="true"><span></span></div>
-    <div class="title-drift title-drift-one">✦</div>
-    <div class="title-drift title-drift-two">· ✧ ·</div>
-    <div class="screen-panel title-panel">
-      <span class="title-lantern title-lantern-left" aria-hidden="true"></span>
-      <span class="title-lantern title-lantern-right" aria-hidden="true"></span>
-      <p class="eyebrow">WELCOME, EXPLORER</p>
-      <div class="title-logo-wrap">
-        <span class="title-logo-gem" aria-hidden="true">◆</span>
-        <h1 class="title-logo">GEMVERSE</h1>
-        <p class="title-adventure"><span>✦</span> ADVENTURE <span>✦</span></p>
+    <div class="title-art-stage">
+      <div class="title-art-bg" aria-hidden="true"></div>
+      <img class="title-stars title-stars-far" src="assets/gemverse_assets/05_ui/title/title_stars_far.png" alt="" aria-hidden="true">
+      <img class="title-stars title-stars-near" src="assets/gemverse_assets/05_ui/title/title_stars_near.png" alt="" aria-hidden="true">
+      <img class="title-explorer" src="assets/gemverse_assets/09_characters/explorer_navigator_title_float_v1.png" alt="นักสำรวจสาวแว่นกำลังลอยอยู่นอกยาน" draggable="false">
+      <div class="title-ui">
+        <img class="title-logo-image" src="assets/gemverse_assets/05_ui/title/logo_gemverse_adventure.png" alt="GemVerse Adventure">
+        <div class="title-actions">
+          <button id="title-play" class="title-asset-btn title-asset-primary"><span>PLAY</span></button>
+          <button id="title-continue" class="title-asset-btn title-asset-secondary" hidden><span>CONTINUE</span></button>
+          <button id="title-settings" class="title-asset-btn title-asset-secondary" aria-label="Settings" aria-expanded="false"><span>SETTINGS</span></button>
+        </div>
+        <p class="title-version">CAPTAIN BUILD • v0.5</p>
       </div>
-      <div class="title-emblem" aria-hidden="true">
-        <span class="title-planet"></span>
-        <span class="title-ring"></span>
-        <span class="title-spark">✦</span>
-        <span class="title-moon"></span>
-      </div>
-      <div class="title-crystals title-crystals-left" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="title-crystals title-crystals-right" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="title-actions">
-        <button id="title-play" class="primary-btn title-play">PLAY</button>
-        <button id="title-continue" class="secondary-btn" hidden>CONTINUE</button>
-        <button id="title-settings" class="secondary-btn" aria-label="Settings" aria-expanded="false">⚙ SETTINGS</button>
-      </div>
-      <p class="title-version">CAPTAIN BUILD • v0.5</p>
     </div>
   </section>
-  <section id="planet-screen" class="progress-screen" aria-label="แผนที่จักรวาล">
-    <div class="screen-panel planet-panel">
-      <button id="back-to-title" class="back-btn">← TITLE</button>
-      <p class="eyebrow">FIRST DESTINATION</p>
-      <button id="open-planet" class="planet-orbit" aria-label="เข้าสู่ดาว Luma">
-        <span class="planet-sphere"></span>
-        <span class="planet-ring"></span>
-      </button>
-      <h2>LUMA</h2>
-      <p>ดาวแห่งแสงแรก • Tutorial Planet</p>
-      <div class="planet-progress"><span id="planet-stars">0</span> / 30 ⭐</div>
-      <button id="enter-planet" class="primary-btn">เข้าสู่ดาว</button>
+  <section id="planet-screen" class="progress-screen map-screen" aria-label="แผนที่จักรวาล">
+    <div class="map-art-stage planet-map-stage">
+      <img class="map-background" src="assets/gemverse_assets/01_backgrounds/bg_nebula.png" alt="" aria-hidden="true" draggable="false">
+      <header class="map-topbar planet-map-topbar">
+        <button id="back-to-title" class="map-back-btn" aria-label="กลับหน้าไตเติล"><span>BACK</span></button>
+        <div class="map-heading">
+          <span>STAR MAP</span>
+          <strong>เลือกดวงดาว</strong>
+        </div>
+      </header>
+      <div class="planet-node-layer" aria-label="ดวงดาวที่เดินทางได้">
+        <button id="planet-luma" class="planet-node planet-node-luma" aria-label="เข้าสู่ดาว Luma">
+          <img class="planet-node-icon" src="assets/gemverse_assets/05_ui/maps/planet_luma_icon.png" alt="" aria-hidden="true" draggable="false">
+          <span class="planet-node-copy">
+            <strong>LUMA</strong>
+            <small>ดาวแห่งแสงแรก</small>
+            <span class="planet-node-progress"><span id="planet-luma-stars">0</span> / 30 ★</span>
+          </span>
+        </button>
+        <button id="planet-mira" class="planet-node planet-node-mira locked" aria-label="ดาว Mira ยังไม่ปลดล็อก" aria-disabled="true" disabled>
+          <img class="planet-node-icon" src="assets/gemverse_assets/05_ui/maps/planet_mira_icon.png" alt="" aria-hidden="true" draggable="false">
+          <span class="planet-node-copy">
+            <strong>MIRA</strong>
+            <small>ดาวแห่งหมอกคริสตัล</small>
+            <span class="planet-node-progress"><span id="planet-mira-stars">0</span> / 30 ★</span>
+            <span id="planet-mira-lock" class="planet-lock-note">ผ่านด่าน 10 เพื่อปลดล็อก</span>
+          </span>
+        </button>
+      </div>
+      <p class="map-footer-note">สะสมดาวเพื่อเปิดเส้นทางสู่ดวงดาวดวงใหม่</p>
     </div>
   </section>
-  <section id="level-screen" class="progress-screen" aria-label="เลือกด่านบนดาว Luma">
-    <div class="screen-panel level-panel">
-      <button id="back-to-space" class="back-btn">← SPACE MAP</button>
-      <p class="eyebrow">PLANET LUMA</p>
-      <h2>เลือกด่าน</h2>
-      <p class="level-summary"><span id="level-stars-total">0</span> / 30 ⭐</p>
-      <div id="level-grid" class="level-grid"></div>
-      <p class="map-note">เก็บดาวเพิ่มด้วยการทำคะแนนให้สูงขึ้น</p>
+  <section id="level-screen" class="progress-screen map-screen" aria-label="เลือกด่านบนดวงดาว">
+    <div id="level-map-stage" class="map-art-stage level-map-stage" data-planet="luma">
+      <img id="level-map-background" class="level-map-background" src="assets/gemverse_assets/01_backgrounds/maps/planet_luma_level_map.png" alt="" aria-hidden="true" draggable="false">
+      <header class="map-topbar level-map-topbar">
+        <button id="back-to-space" class="map-back-btn" aria-label="กลับแผนที่จักรวาล"><span>BACK</span></button>
+        <div class="map-heading level-map-heading">
+          <span id="level-planet-name">LUMA</span>
+          <strong id="level-planet-subtitle">ดาวแห่งแสงแรก</strong>
+        </div>
+        <div class="level-map-stars" aria-label="ดาวที่สะสมบนดวงดาวนี้"><strong id="level-stars-total">0</strong><small>/ 30 ★</small></div>
+      </header>
+      <div id="level-grid" class="level-node-layer" aria-label="ด่านบนดวงดาว"></div>
+      <p id="level-map-note" class="map-footer-note">เก็บดาวเพิ่มด้วยการทำคะแนนให้สูงขึ้น</p>
     </div>
   </section>
   <section id="mission-screen" class="progress-screen" aria-label="เป้าหมายก่อนเริ่มด่าน">
@@ -152,6 +173,6 @@
     </div>
   </div>
 </div>
-<script type="module" src="js/main.js?v=048"></script>
+<script type="module" src="js/main.js?v=067"></script>
 </body>
 </html>

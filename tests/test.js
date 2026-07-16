@@ -9,7 +9,18 @@ import { GravitySystem } from '../js/systems/GravitySystem.js';
 import { ScoreSystem } from '../js/systems/ScoreSystem.js';
 import { Effects } from '../js/engine/Effects.js';
 import { LevelSystem } from '../js/systems/LevelSystem.js';
-import { FIRST_PLANET, starsForScore } from '../js/systems/LevelCatalog.js';
+import {
+  FIRST_PLANET,
+  SECOND_PLANET,
+  PLANETS,
+  ALL_LEVELS,
+  MAX_LEVEL,
+  getPlanetById,
+  getPlanetForLevel,
+  getLevelById,
+  unlockedAfterWin,
+  starsForScore,
+} from '../js/systems/LevelCatalog.js';
 
 let pass = 0, fail = 0;
 function ok(cond, name) {
@@ -66,6 +77,34 @@ console.log('--- Board: กระดานตั้งต้น ---');
   ok(starsForScore(FIRST_PLANET.levels[0], oneStar - 1) === 0, 'คะแนนไม่ถึงเป้าหมายยังไม่ได้ดาว');
   ok(starsForScore(FIRST_PLANET.levels[0], twoStars) === 2, 'คำนวณดาวจากเกณฑ์คะแนนได้ถูกต้อง');
   ok(starsForScore(FIRST_PLANET.levels[0], threeStars + 999) === 3, 'คะแนนสูงสุดได้ไม่เกิน 3 ดาว');
+}
+{
+  ok(PLANETS.length === 2 && SECOND_PLANET.levels.length === 10, 'แคตตาล็อกมี 2 ดาว ดาวละ 10 ด่าน');
+  ok(ALL_LEVELS.length === 20, 'รวมทั้งหมด 20 ด่าน');
+  ok(new Set(ALL_LEVELS.map((level) => level.id)).size === 20, 'Level ID ทั้ง 20 ด่านไม่ซ้ำกัน');
+  ok(ALL_LEVELS.every((level, index) => level.id === index + 1), 'Level ID เรียงต่อกันจาก 1 ถึง 20');
+  ok(ALL_LEVELS.every((level) => level.target === level.stars[0]), 'Target ของทุกด่านเท่ากับเกณฑ์ 1 ดาว');
+  ok(ALL_LEVELS.every((level) => level.stars[0] < level.stars[1] && level.stars[1] < level.stars[2]), 'เกณฑ์ดาวของทุกด่านเพิ่มตามลำดับ');
+  ok(getPlanetById('luma') === FIRST_PLANET && getPlanetById('mira') === SECOND_PLANET, 'ค้นหาดาวจาก ID ได้ถูกต้อง');
+  ok(getPlanetById('unknown') === null, 'ค้นหาดาวที่ไม่มีแล้วได้ null');
+  ok(getPlanetForLevel(1) === FIRST_PLANET && getPlanetForLevel(20) === SECOND_PLANET, 'ค้นหาดาวจาก Level ID ได้ถูกต้อง');
+  ok(getPlanetForLevel(21) === null, 'Level ID ที่ไม่มีไม่อ้างถึงดาว');
+  ok(getLevelById(11) === SECOND_PLANET.levels[0] && getLevelById(21) === null, 'ค้นหาด่านจาก ID ได้ถูกต้อง');
+  ok(MAX_LEVEL === 20, 'MAX_LEVEL เท่ากับด่านสูงสุด');
+  ok(unlockedAfterWin(10, 10) === 11, 'ผ่านด่าน 10 แล้วปลดล็อกด่าน 11');
+  ok(unlockedAfterWin(20, 20) === 20, 'ผ่านด่านสูงสุดแล้วไม่ปลดล็อกเกินด่าน 20');
+  ok(PLANETS.every((planet) => planet.nodePositions.length === planet.levels.length), 'ทุกดาวมีตำแหน่งปุ่มครบทุกด่าน');
+  ok(PLANETS.every((planet) => planet.nodePositions.every(({ x, y }) => x >= 15 && x <= 85 && y >= 15 && y <= 90)), 'ตำแหน่งปุ่มทุกด่านอยู่ใน safe area');
+  const responsiveSizes = [[320, 568], [360, 640], [390, 844], [430, 932], [560, 900]];
+  const nodesNeverOverlap = PLANETS.every((planet) => responsiveSizes.every(([width, height]) => {
+    const nodeSize = height <= 700 ? 48 : Math.min(64, Math.max(50, width * 0.14));
+    return planet.nodePositions.every((a, index) => planet.nodePositions.slice(index + 1).every((b) => {
+      const separatedX = Math.abs(a.x - b.x) * width / 100 >= nodeSize;
+      const separatedY = Math.abs(a.y - b.y) * height / 100 >= nodeSize;
+      return separatedX || separatedY;
+    }));
+  }));
+  ok(nodesNeverOverlap, 'ปุ่มด่านไม่ซ้อนกันบน viewport เป้าหมาย');
 }
 {
   let clean = true;

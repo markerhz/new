@@ -18,6 +18,9 @@ Done This Sprint
 - Shine & Float: สีสดขึ้น, ออร่าวิ้งเต้น, ประกายโคจร, ลอยไร้แรงโน้มถ่วงคนละจังหวะ (TASK-009)
 - ตัวพิเศษเข้าชุด (ระเบิดโลหะแม็กม่า / โนวาขาวร้อนขอบรุ้ง)
 - Planet Luma Vertical Slice: เลือก 10 ด่าน เป้าหมายคะแนน + Moves และสะสม 1–3 ดาว (TASK-034)
+- Asset-first Title Screen แนวตั้ง 16-bit พร้อม UI PNG (TASK-045)
+- ล็อกตัวตนนักสำรวจหญิง Retro Navigator สำหรับหน้า Title (TASK-046)
+- Two-Planet Route Maps: Luma 1–10 + Mira 11–20 พร้อม Global Unlock และ Responsive QA (TASK-047)
 
 Current Tasks (เรียงตามลำดับ)
 

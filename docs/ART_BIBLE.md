@@ -113,5 +113,8 @@ Purple Galaxy reference.
 *   **Character**: Female explorer with readable glasses, black curly hair and a pastel spacesuit.
 *   **Silhouette**: Glasses, curls and the suit backpack must remain recognizable at gameplay scale.
 *   **Suit Direction**: Soft lavender, powder blue, cream and restrained warm accents; cozy and exploratory, never military.
+*   **Approved Navigator Identity**: Fair warm ivory-peach skin, small oval lavender glasses, black curls gathered into a low ponytail, powder-blue field suit, short asymmetrical lavender cape, cream gloves/boots, navigation satchel, map tube, antenna backpack and star compass.
+*   **Retro Rendering Lock**: Early-1990s Japanese 16-bit console RPG proportions (about 5–5.5 heads tall), small restrained eyes, limited material ramps, hard pixel clusters and no glossy modern character rendering.
+*   **Alternate Mission Outfit**: The approved B concept is reserved as a cream-and-lavender ruin-mechanic outfit for repair or puzzle missions; it is not a second character.
 *   **Starter Animation Set**: Idle, walk, interact, item pickup and celebrate. The walk cycle should feel lively but calm.
 *   **Production Order**: Approve one idle pose and one walk cycle in a single vertical-slice scene before producing the full character sheet.

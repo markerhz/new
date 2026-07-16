@@ -21,7 +21,16 @@ import { GravitySystem } from '../systems/GravitySystem.js';
 import { ScoreSystem } from '../systems/ScoreSystem.js?v=047';
 import { LevelSystem } from '../systems/LevelSystem.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
-import { FIRST_PLANET, starsForScore } from '../systems/LevelCatalog.js';
+import {
+  FIRST_PLANET,
+  PLANETS,
+  MAX_LEVEL,
+  getPlanetById,
+  getPlanetForLevel,
+  getLevelById,
+  unlockedAfterWin,
+  starsForScore,
+} from '../systems/LevelCatalog.js?v=067';
 
 /** สถานะของเกม */
 const State = {
@@ -52,12 +61,17 @@ export class Game {
     this.matchSystem = new MatchSystem(this.board);
     this.gravitySystem = new GravitySystem(this.board);
     this.scoreSystem = new ScoreSystem();
+    this.currentPlanet = FIRST_PLANET;
     this.currentLevel = FIRST_PLANET.levels[0];
     this.levelSystem = new LevelSystem(this.currentLevel);
     this.saveSystem = new SaveSystem();
     this.progress = this.saveSystem.load() || { unlocked: 1, levels: {}, tutorials: {} };
     this.progress.levels ||= {};
     this.progress.tutorials ||= {};
+    const savedUnlocked = Number(this.progress.unlocked);
+    this.progress.unlocked = Number.isInteger(savedUnlocked)
+      ? Math.max(1, Math.min(MAX_LEVEL, savedUnlocked))
+      : 1;
     this.sfx = new Sfx();
 
     // ---- Input ----
@@ -118,12 +132,22 @@ export class Game {
     }
     if (this.retryBtn) this.retryBtn.addEventListener('click', () => this.restartLevel());
     if (this.nextLevelBtn) this.nextLevelBtn.addEventListener('click', () => this.startNextLevel());
-    if (this.levelSelectBtn) this.levelSelectBtn.addEventListener('click', () => this.showLevelSelect());
-    const openPlanet = () => this.showLevelSelect();
-    document.getElementById('open-planet')?.addEventListener('click', openPlanet);
-    document.getElementById('enter-planet')?.addEventListener('click', openPlanet);
+    if (this.levelSelectBtn) {
+      this.levelSelectBtn.addEventListener('click', () => {
+        if (this.currentLevel.id === 10 && this.progress.unlocked >= 11) this.showPlanetMap();
+        else this.showLevelSelect();
+      });
+    }
+    PLANETS.forEach((planet) => {
+      document.getElementById(`planet-${planet.id}`)?.addEventListener('click', () => {
+        if (this.isPlanetUnlocked(planet)) this.showLevelSelect(planet.id);
+      });
+    });
     document.getElementById('title-play')?.addEventListener('click', () => this.showPlanetMap());
-    document.getElementById('title-continue')?.addEventListener('click', () => this.showLevelSelect());
+    document.getElementById('title-continue')?.addEventListener('click', () => {
+      const planet = getPlanetForLevel(this.progress.unlocked) || FIRST_PLANET;
+      this.showLevelSelect(planet.id);
+    });
     document.getElementById('back-to-title')?.addEventListener('click', () => this.showTitle());
     document.getElementById('back-to-space')?.addEventListener('click', () => this.showPlanetMap());
     document.getElementById('back-to-levels')?.addEventListener('click', () => this.showLevelSelect());
@@ -131,6 +155,7 @@ export class Game {
     document.getElementById('tutorial-ok')?.addEventListener('click', () => this.dismissTutorial());
     const continueBtn = document.getElementById('title-continue');
     if (continueBtn) continueBtn.hidden = !(this.progress.unlocked > 1 || Object.keys(this.progress.levels).length > 0);
+    this.renderPlanetMap();
     this.renderLevelMap();
     this.updateHUD(null);
     this.updateLevelHUD();
@@ -183,27 +208,79 @@ export class Game {
     if (this.lessonEl) this.lessonEl.textContent = this.currentLevel.lesson;
   }
 
+  isPlanetUnlocked(planet) {
+    return planet.levels[0]?.id <= this.progress.unlocked;
+  }
+
+  starsOnPlanet(planet) {
+    return planet.levels.reduce((total, level) => {
+      return total + (this.progress.levels[level.id]?.stars || 0);
+    }, 0);
+  }
+
+  renderPlanetMap() {
+    for (const planet of PLANETS) {
+      const button = document.getElementById(`planet-${planet.id}`);
+      const starsEl = document.getElementById(`planet-${planet.id}-stars`);
+      const lockEl = document.getElementById(`planet-${planet.id}-lock`);
+      const unlocked = this.isPlanetUnlocked(planet);
+      const stars = this.starsOnPlanet(planet);
+      if (starsEl) starsEl.textContent = stars;
+      if (lockEl) {
+        lockEl.hidden = unlocked;
+        lockEl.textContent = unlocked ? '' : `ผ่านด่าน ${planet.levels[0].id - 1} เพื่อปลดล็อก`;
+      }
+      if (button) {
+        button.disabled = !unlocked;
+        button.classList.toggle('locked', !unlocked);
+        button.setAttribute('aria-disabled', String(!unlocked));
+        button.setAttribute('aria-label', unlocked
+          ? `เข้าสู่ดาว ${planet.name} เก็บได้ ${stars} ดาว`
+          : `ดาว ${planet.name} ยังไม่ปลดล็อก ผ่านด่าน ${planet.levels[0].id - 1} ก่อน`);
+      }
+    }
+  }
+
   renderLevelMap() {
     const grid = document.getElementById('level-grid');
     if (!grid) return;
     grid.replaceChildren();
     let totalStars = 0;
-    for (const level of FIRST_PLANET.levels) {
+    for (const [index, level] of this.currentPlanet.levels.entries()) {
       const saved = this.progress.levels[level.id] || { stars: 0, bestScore: 0 };
       totalStars += saved.stars || 0;
       const unlocked = level.id <= this.progress.unlocked;
+      const position = this.currentPlanet.nodePositions[index];
       const button = document.createElement('button');
-      button.className = `level-node${unlocked ? '' : ' locked'}${level.id === this.progress.unlocked ? ' current' : ''}`;
+      const completed = (saved.stars || 0) > 0;
+      const current = level.id === this.progress.unlocked;
+      button.className = `level-node${unlocked ? '' : ' locked'}${completed ? ' completed' : ''}${current ? ' current' : ''}`;
+      button.style.setProperty('--node-x', `${position.x}%`);
+      button.style.setProperty('--node-y', `${position.y}%`);
       button.disabled = !unlocked;
       button.setAttribute('aria-label', unlocked ? `ด่าน ${level.id} ได้ ${saved.stars || 0} ดาว` : `ด่าน ${level.id} ยังไม่ปลดล็อก`);
-      button.innerHTML = `<span class="number">${unlocked ? level.id : '🔒'}</span><span class="stars">${'★'.repeat(saved.stars || 0)}${'☆'.repeat(3 - (saved.stars || 0))}</span>`;
+      if (current) button.setAttribute('aria-current', 'step');
+      button.innerHTML = `<span class="number">${unlocked ? level.id : 'LOCK'}</span><span class="stars" aria-hidden="true">${'★'.repeat(saved.stars || 0)}${'☆'.repeat(3 - (saved.stars || 0))}</span>`;
       if (unlocked) button.addEventListener('click', () => this.selectLevel(level.id));
       grid.appendChild(button);
     }
     const totalEl = document.getElementById('level-stars-total');
-    const planetEl = document.getElementById('planet-stars');
     if (totalEl) totalEl.textContent = totalStars;
-    if (planetEl) planetEl.textContent = totalStars;
+    const nameEl = document.getElementById('level-planet-name');
+    const subtitleEl = document.getElementById('level-planet-subtitle');
+    const backgroundEl = document.getElementById('level-map-background');
+    const stageEl = document.getElementById('level-map-stage');
+    const noteEl = document.getElementById('level-map-note');
+    if (nameEl) nameEl.textContent = this.currentPlanet.name;
+    if (subtitleEl) subtitleEl.textContent = this.currentPlanet.subtitle;
+    if (backgroundEl) {
+      backgroundEl.src = this.currentPlanet.mapAsset;
+      backgroundEl.alt = `แผนที่ดาว ${this.currentPlanet.name}`;
+    }
+    if (stageEl) stageEl.dataset.planet = this.currentPlanet.id;
+    if (noteEl) noteEl.textContent = this.currentPlanet.id === 'luma'
+      ? 'เดินตามแสงดาวและเรียนรู้เครื่องมือทีละขั้น'
+      : 'หมอกคริสตัลต้องใช้คอมโบและการวางแผนที่แม่นขึ้น';
   }
 
   showTitle() {
@@ -217,14 +294,20 @@ export class Game {
 
   showPlanetMap() {
     this.gameplayActive = false;
+    this.renderPlanetMap();
     document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('planet-screen')?.classList.add('show');
     document.getElementById('level-screen')?.classList.remove('show');
     document.getElementById('mission-screen')?.classList.remove('show');
+    this.resultEl?.classList.remove('show', 'win', 'lose');
+    this.resultEl?.setAttribute('aria-hidden', 'true');
   }
 
-  showLevelSelect() {
+  showLevelSelect(planetId = this.currentPlanet.id) {
     this.gameplayActive = false;
+    const planet = getPlanetById(planetId) || this.currentPlanet;
+    if (!this.isPlanetUnlocked(planet)) return;
+    this.currentPlanet = planet;
     this.renderLevelMap();
     document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('planet-screen')?.classList.remove('show');
@@ -234,8 +317,9 @@ export class Game {
   }
 
   selectLevel(levelId) {
-    const level = FIRST_PLANET.levels.find((item) => item.id === levelId);
+    const level = getLevelById(levelId);
     if (!level || levelId > this.progress.unlocked) return;
+    this.currentPlanet = getPlanetForLevel(levelId) || this.currentPlanet;
     this.currentLevel = level;
     document.getElementById('title-screen')?.classList.remove('show');
     document.getElementById('level-screen')?.classList.remove('show');
@@ -304,15 +388,21 @@ export class Game {
     if (this.resultScoreEl) this.resultScoreEl.textContent = this.scoreSystem.score;
     if (this.resultGoalsEl) this.resultGoalsEl.textContent = this.currentLevel.target;
     if (this.resultStarsEl) this.resultStarsEl.textContent = `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}`;
-    if (this.nextLevelBtn) this.nextLevelBtn.hidden = !won || this.currentLevel.id >= FIRST_PLANET.levels.length;
+    if (this.nextLevelBtn) {
+      this.nextLevelBtn.hidden = !won || this.currentLevel.id === 10 || this.currentLevel.id >= MAX_LEVEL;
+    }
+    if (this.levelSelectBtn) {
+      this.levelSelectBtn.textContent = won && this.currentLevel.id === 10 ? 'PLANETS' : 'LEVELS';
+    }
     if (won) {
       const previous = this.progress.levels[this.currentLevel.id] || { stars: 0, bestScore: 0 };
       this.progress.levels[this.currentLevel.id] = {
         stars: Math.max(previous.stars || 0, stars),
         bestScore: Math.max(previous.bestScore || 0, this.scoreSystem.score),
       };
-      this.progress.unlocked = Math.max(this.progress.unlocked, Math.min(this.currentLevel.id + 1, FIRST_PLANET.levels.length));
+      this.progress.unlocked = unlockedAfterWin(this.progress.unlocked, this.currentLevel.id);
       this.saveSystem.save(this.progress);
+      this.renderPlanetMap();
       this.renderLevelMap();
     }
   }
@@ -340,8 +430,9 @@ export class Game {
   }
 
   startNextLevel() {
-    const next = Math.min(this.currentLevel.id + 1, FIRST_PLANET.levels.length);
-    this.selectLevel(next);
+    const next = Math.min(this.currentLevel.id + 1, MAX_LEVEL);
+    if (next === 11) this.showPlanetMap();
+    else this.selectLevel(next);
   }
 
   /** เริ่มลูปหลัก */
