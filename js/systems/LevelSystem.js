@@ -20,5 +20,12 @@ export class LevelSystem {
     return true;
   }
 
+  /** คืนจำนวน Moves ที่เหลือและปิดด่าน สำหรับแปลงเป็นโบนัสหลังได้ 3 ดาว */
+  cashOutMoves() {
+    const remaining = Math.max(0, this.moves);
+    this.moves = 0;
+    return remaining;
+  }
+
   recordScore(score) { this.score = score; }
 }

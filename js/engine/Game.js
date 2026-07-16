@@ -18,7 +18,7 @@ import { Board } from '../board/Board.js';
 import { Candy } from '../board/Candy.js';
 import { MatchSystem } from '../systems/MatchSystem.js?v=037';
 import { GravitySystem } from '../systems/GravitySystem.js';
-import { ScoreSystem } from '../systems/ScoreSystem.js';
+import { ScoreSystem } from '../systems/ScoreSystem.js?v=047';
 import { LevelSystem } from '../systems/LevelSystem.js';
 import { SaveSystem } from '../systems/SaveSystem.js';
 import { FIRST_PLANET, starsForScore } from '../systems/LevelCatalog.js';
@@ -36,6 +36,8 @@ export class Game {
   static POP_DURATION = 180;
   /** ระยะเวลาอนิเมชันหล่น (ms) — เหลือไว้เป็นค่าอ้างอิง (TASK 001: ใช้เวลาตามระยะจริงใน dropAndRefill) */
   static FALL_DURATION = 260;
+  /** คะแนนต่อ Move ที่เหลือ เมื่อทำครบ 3 ดาวแล้ว */
+  static MOVE_BONUS = 50;
 
   /**
    * @param {HTMLCanvasElement} canvas
@@ -73,6 +75,7 @@ export class Game {
     this.gameplayActive = false;
     this.idleMs = 0;
     this.hintMove = null;
+    this.lastMoveBonus = 0;
 
     // ---- HUD (DOM) ----
     this.scoreEl = document.getElementById('score');
@@ -258,6 +261,14 @@ export class Game {
   }
 
   showLevelResult() {
+    const earnedThreeStars = starsForScore(this.currentLevel, this.scoreSystem.score) === 3;
+    if (!this.levelSystem.finished && earnedThreeStars) {
+      const remainingMoves = this.levelSystem.cashOutMoves();
+      this.lastMoveBonus = this.scoreSystem.addBonus(remainingMoves * Game.MOVE_BONUS);
+      this.levelSystem.recordScore(this.scoreSystem.score);
+      this.updateHUD(null);
+      this.updateLevelHUD();
+    }
     if (!this.levelSystem.finished) return;
     const won = this.levelSystem.goalMet;
     if (!this.resultEl) return;
@@ -270,7 +281,9 @@ export class Game {
     this.resultEl.setAttribute('aria-hidden', 'false');
     if (this.resultTitleEl) this.resultTitleEl.textContent = won ? 'MISSION COMPLETE' : 'MISSION FAILED';
     if (this.resultIconEl) this.resultIconEl.textContent = won ? '✨' : '🛠️';
-    if (this.resultMessageEl) this.resultMessageEl.textContent = won ? 'ขุดคริสตัลเป้าหมายครบแล้ว!' : 'Moves หมดแล้ว ลองวางแผนคอมโบใหม่อีกครั้ง';
+    if (this.resultMessageEl) this.resultMessageEl.textContent = won
+      ? (this.lastMoveBonus > 0 ? `3 STARS! • MOVES BONUS +${this.lastMoveBonus}` : 'ขุดคริสตัลเป้าหมายครบแล้ว!')
+      : 'Moves หมดแล้ว ลองวางแผนคอมโบใหม่อีกครั้ง';
     if (this.resultScoreEl) this.resultScoreEl.textContent = this.scoreSystem.score;
     if (this.resultGoalsEl) this.resultGoalsEl.textContent = this.currentLevel.target;
     if (this.resultStarsEl) this.resultStarsEl.textContent = `${'★'.repeat(stars)}${'☆'.repeat(3 - stars)}`;
@@ -290,6 +303,7 @@ export class Game {
   restartLevel() {
     this.levelSystem = new LevelSystem(this.currentLevel);
     this.scoreSystem.reset();
+    this.lastMoveBonus = 0;
     this.board.fillRandom();
     let guard = 0;
     while (!this.matchSystem.hasPossibleMove() && ++guard < 20) this.board.fillRandom();

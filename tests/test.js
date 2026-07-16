@@ -55,6 +55,11 @@ console.log('--- Board: กระดานตั้งต้น ---');
   ok(level.finished && !level.complete && !level.canMove, 'Moves หมดก่อนเป้าหมายครบแล้วหยุดรับตาเดิน');
 }
 {
+  const level = new LevelSystem({ id: 1, moves: 5, target: 100, stars: [100, 200, 300] });
+  level.useMove();
+  ok(level.cashOutMoves() === 4 && level.finished, 'ครบ 3 ดาวแล้ว Cash out Moves ที่เหลือได้');
+}
+{
   ok(FIRST_PLANET.levels.length === 10, 'ดาวแรกมี 10 ด่าน');
   ok(FIRST_PLANET.levels.slice(0, 3).every((level) => level.tutorial?.title && level.tutorial?.body), 'ด่าน 1-3 มี Tutorial ครบ');
   const [oneStar, twoStars, threeStars] = FIRST_PLANET.levels[0].stars;
@@ -159,8 +164,9 @@ console.log('--- ScoreSystem (chips × mult) ---');
   const r3 = score.addMatchScore([{}, {}, {}, {}], { chain: 3 });
   ok(r3.mult === 2 && r3.gained === 80, 'chain 3: 4 เม็ด × mult 2 = 80 (ได้ ' + r3.gained + ')');
   ok(score.score === 155 && score.totalScore === 155, 'คะแนนสะสมถูกต้อง (155)');
+  ok(score.addBonus(150) === 150 && score.score === 305, 'Moves Bonus เพิ่มคะแนนตรงจำนวน');
   score.reset();
-  ok(score.score === 0 && score.totalScore === 155, 'reset ล้างเฉพาะคะแนนรอบ ไม่ล้างคะแนนรวม');
+  ok(score.score === 0 && score.totalScore === 305, 'reset ล้างเฉพาะคะแนนรอบ ไม่ล้างคะแนนรวม');
 }
 
 console.log('--- hasPossibleMove (กันเกมตัน) ---');

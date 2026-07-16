@@ -52,6 +52,13 @@ export class ScoreSystem {
     return { chips, mult, gained };
   }
 
+  addBonus(amount) {
+    const gained = Math.max(0, Math.round(amount));
+    this.score += gained;
+    this.totalScore += gained;
+    return gained;
+  }
+
   reset() {
     this.score = 0;
   }
